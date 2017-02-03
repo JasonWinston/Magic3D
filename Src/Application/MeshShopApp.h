@@ -34,7 +34,8 @@ namespace MagicApp
             SIMPLIFYSELECTVERTEX,
             FILLHOLE,
             UNIFORMREMESH,
-            OPTIMIZEMESH,
+            CDTOPTIMIZATION,
+            CVTOPTIMIZATION,
             RUNSCRIPT
         };
 
@@ -47,6 +48,14 @@ namespace MagicApp
         };
 
     public:
+        enum SplitType
+        {
+            ST_PLANE_XY,
+            ST_PLANE_YZ,
+            ST_PLANE_ZX,
+            ST_PLANE_RANDOM
+        };
+
         MeshShopApp();
         ~MeshShopApp();
 
@@ -63,20 +72,21 @@ namespace MagicApp
 
         void SwitchDisplayMode(void);
         bool ImportMesh(void);
-        void ExportMesh(bool isSubThread = true);
+        void IsManifold(void);
         void ConsolidateTopology(bool isSubThread = true);
         void ReverseDirection(void);
         void RemoveMeshIsolatePart(bool isSubThread = true);
         void ConsolidateGeometry(bool isSubThread = true);
-        void OptimizeMesh(bool isSubThread = true);
+        void CDTOptimization(double sharpAngle, bool isSubThread = true);
+        void CVTOptimization(double sharpAngle, bool isSubThread = true);
         void RemoveMeshNoise(double positionWeight, bool isSubThread = true);
         void SmoothMesh(double positionWeight, bool isSubThread = true);
-        void EnhanceMeshDetail(bool isSubThread = true);
+        void EnhanceMeshDetail(double intensity, bool isSubThread = true);
         void LoopSubdivide(bool isSubThread = true);
         void RefineMesh(int targetVertexCount, bool isSubThread = true);
         void SimplifyMesh(int targetVertexCount, bool isSubThread = true);
         void SimplifySelectedVertices(bool isSubThread = true);
-        void UniformRemesh(int targetVertexCount, bool isSubThread = true);
+        void UniformRemesh(int targetVertexCount, double sharpAngle, bool isSubThread = true);
         void UniformSampleMesh(int targetPointCount);
         void EnterReliefApp(void);
         void EnterTextureApp(void);
@@ -90,6 +100,7 @@ namespace MagicApp
         void DeleteSelections(void);
         void IgnoreBack(bool ignore);
         void MoveModel(void);
+        void SplitMeshByPlane(SplitType st, double offsetValue);
         void RunScript(bool isSubThread = true);
 
         int GetMeshVertexCount(void);
@@ -149,5 +160,7 @@ namespace MagicApp
         std::vector<GPP::Int> mBridgeEdgeVertices;
         std::vector<bool> mVertexBridgeFlag;
         bool mIsFlatRenderingMode;
+        double mSharpAngle;
+        double mEnhanceIntensity;
     };
 }

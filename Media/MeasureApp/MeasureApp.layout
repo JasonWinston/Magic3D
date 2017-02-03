@@ -27,7 +27,11 @@
         <Widget type="Button" skin="But_Curvature_CN" position="247 90 43 43" align="Left Top" name="But_CurvatureGeodesics">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="EditBox" skin="EditBox" position="247 60 40 30" align="Left Button" name="Edit_CurvtureWeight">
+        <Widget type="EditBox" skin="EditBox" position="242 70 30 20" align="Left Button" name="Edit_CurvtureWeight">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="EditBox" skin="EditBox" position="272 70 30 20" align="Left Button" name="Edit_CurvtureType">
             <Property key="TextColour" value="0.3 0.3 0.3"/>
             <Property key="Visible" value="false"/>
         </Widget>
@@ -42,13 +46,16 @@
         <Widget type="Button" skin="But_Volume_CN" position="118 155 43 43" align="Left Top" name="But_VolumeRef">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_Curvature_CN" position="161 155 43 43" align="Left Top" name="But_CurvatureRef">
+        <Widget type="Button" skin="But_MeanCurvature_CN" position="161 155 43 43" align="Left Top" name="But_MeanCurvature">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_PrincipalCurvature_CN" position="204 155 43 43" align="Left Top" name="But_PrincipalCurvature">
+        <Widget type="Button" skin="But_GaussianCurvature_CN" position="204 155 43 43" align="Left Top" name="But_GaussianCurvature">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_Thickness_CN" position="247 155 43 43" aligh="Left Top" name="But_Thickness">
+        <Widget type="Button" skin="But_PrincipalCurvature_CN" position="247 155 43 43" align="Left Top" name="But_PrincipalCurvature">
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="Button" skin="But_Thickness_CN" position="290 155 43 43" aligh="Left Top" name="But_Thickness">
             <Property key="Visible" value="false"/>
         </Widget>
       

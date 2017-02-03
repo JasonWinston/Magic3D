@@ -8,7 +8,7 @@ namespace MagicApp
         mpPointCloud(NULL),
         mpTriMesh(NULL),
         mObjCenterCoord(),
-        mScaleValue(0),
+        mScaleValue(1),
         mImageColorIds(),
         mTextureImageFiles(),
         mCloudIds(),
@@ -218,14 +218,7 @@ namespace MagicApp
             dumpOut << itr->GetImageIndex() << " " << itr->GetLocalX() << " " << itr->GetLocalY() << " ";
         }
         dumpOut << std::endl;
-        
-        dumpOut << mCloudIds.size() << std::endl;
-        for (std::vector<int>::const_iterator itr = mCloudIds.begin(); itr != mCloudIds.end(); ++itr)
-        {
-            dumpOut << *itr << " ";
-        }
-        dumpOut << std::endl;
-        
+           
         dumpOut << mColorIds.size() << std::endl;
         for (std::vector<int>::const_iterator itr = mColorIds.begin(); itr != mColorIds.end(); ++itr)
         {
@@ -235,6 +228,13 @@ namespace MagicApp
 
         dumpOut << mImageColorIdFlags.size() << std::endl;
         for (std::vector<int>::const_iterator itr = mImageColorIdFlags.begin(); itr != mImageColorIdFlags.end(); ++itr)
+        {
+            dumpOut << *itr << " ";
+        }
+        dumpOut << std::endl;
+
+        dumpOut << mCloudIds.size() << std::endl;
+        for (std::vector<int>::const_iterator itr = mCloudIds.begin(); itr != mCloudIds.end(); ++itr)
         {
             dumpOut << *itr << " ";
         }
@@ -255,24 +255,14 @@ namespace MagicApp
             mImageColorIds.push_back(GPP::ImageColorId(imageIndex, int(localX + 0.5), int(localY + 0.5)));
         }
 
-        mCloudIds.clear();
-        loadIn >> count;
-        mCloudIds.reserve(count);
-        int cloudId;
-        for (int cid = 0; cid < count; cid++)
-        {
-            loadIn >> cloudId;
-            mCloudIds.push_back(cloudId);
-        }
-
         mColorIds.clear();
         loadIn >> count;
         mColorIds.reserve(count);
         int colorId;
         for (int cid = 0; cid < count; cid++)
         {
-            loadIn >> cloudId;
-            mColorIds.push_back(cloudId);
+            loadIn >> colorId;
+            mColorIds.push_back(colorId);
         }
 
         mImageColorIdFlags.clear();
@@ -283,6 +273,16 @@ namespace MagicApp
         {
             loadIn >> flag;
             mImageColorIdFlags.push_back(flag);
+        }
+
+        mCloudIds.clear();
+        loadIn >> count;
+        mCloudIds.reserve(count);
+        int cloudId;
+        for (int cid = 0; cid < count; cid++)
+        {
+            loadIn >> cloudId;
+            mCloudIds.push_back(cloudId);
         }
     }
 }

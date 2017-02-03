@@ -55,11 +55,13 @@ namespace GPP
 
         // pointCloud should have normals
         // Geometry will be modified to match normal
+        // SmoothGeometry is an enhancement of this api.
         static ErrorCode SmoothGeometryByNormal(IPointCloud* pointCloud, Int neighborCount = 9);
 
         // uniformaity value is between [0, 1], smaller value means more uniform
         // neighborCount is default 9
         // pointCloud doesn't need to have normals
+        // CalculateOutlier is an enhancement of this api.
         static ErrorCode CalculateUniformity(const IPointCloud* pointCloud, std::vector<Real>* uniformaity, Int neighborCount = 9);
     };
 }

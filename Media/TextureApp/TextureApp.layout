@@ -23,16 +23,31 @@
             <Property key="Visible" value="false"/>
         </Widget>
 
-        <Widget type="Button" skin="But_ColorMerging_CN" position="15 145 60 60" align="Left Top" name="But_FuseMeshColor"/>
+        <Widget type="Button" skin="But_Color_CN" position="15 145 60 60" align="Left Top" name="But_MeshColor"/>
+        <Widget type="EditBox" skin="EditBox" position="75 160 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_H">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="EditBox" skin="EditBox" position="105 160 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_S">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="EditBox" skin="EditBox" position="135 160 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_V">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="Button" skin="But_ColorMerging_CN" position="165 155 43 43" align="Left Top" name="But_FuseMeshColor">
+            <Property key="Visible" value="false"/>
+        </Widget>
 
         <Widget type="Button" skin="But_TextureImage_CN" position="15 210 60 60" align="Left Top" name="But_GenerateTextureImage"></Widget>
-        <Widget type="Button" skin="But_Clustering" position="75 220 43 43" align="Left Top" name="But_TextureImageByVertex">
+        <Widget type="Button" skin="But_VertexColor_CN" position="75 220 43 43" align="Left Top" name="But_TextureImageByVertex">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_Image" position="118 220 43 43" align="Left Top" name="But_TextureImageByImage">
+        <Widget type="Button" skin="But_ImageColor_CN" position="118 220 43 43" align="Left Top" name="But_TextureImageByImage">
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_Fuse_CN" position="161 220 43 43" align="Left Top" name="But_TuneTextureImageByVertex">
+        <Widget type="Button" skin="But_TextureMerge_CN" position="161 220 43 43" align="Left Top" name="But_TuneTextureImageByVertex">
             <Property key="Visible" value="false"/>
         </Widget>
 

@@ -39,7 +39,8 @@ namespace MagicApp
         mCurrentTextureImageId(0),
         mTextureType(TT_NONE),
         mTextureImageName("../../Media/TextureApp/texture.png"),
-        mTextureImageMasks()
+        mTextureImageMasks(),
+        mSharpDiff()
     {
     }
 
@@ -179,7 +180,7 @@ namespace MagicApp
         {
             GPP::TriMesh* triMesh = ModelManager::Get()->GetMesh();
             std::vector<GPP::ImageColorId> imageColorIds = ModelManager::Get()->GetImageColorIds();
-            triMesh->SetHasColor(true);
+            triMesh->SetHasVertexColor(true);
             int maxColorId = 10;
             double deltaColor = 0.1;
             int vertexCount = triMesh->GetVertexCount();
@@ -302,7 +303,7 @@ namespace MagicApp
             case MagicApp::TextureApp::NONE:
                 break;
             case MagicApp::TextureApp::FUSEMESHCOLOR:
-                FuseMeshColor(false);
+                FuseMeshColor(mSharpDiff[0], mSharpDiff[1], mSharpDiff[2], false);
                 break;
             case MagicApp::TextureApp::OPTIMISE_IMAGE_COLOR_ID:
                 ComputeImageColorIds(false);
@@ -418,7 +419,7 @@ namespace MagicApp
         }
         else if (mDisplayMode == TRIMESH_TEXTURE)
         {
-            if (triMesh == NULL)
+            if (triMesh == NULL || triMesh->HasTriangleTexCoord() == false)
             {
                 MagicCore::RenderSystem::Get()->HideRenderingObject("TriMesh_TextureApp");
                 return;
@@ -430,7 +431,7 @@ namespace MagicApp
         }
         else if (mDisplayMode == UVMESH_WIREFRAME)
         {
-            if (triMesh == NULL)
+            if (triMesh == NULL || triMesh->HasTriangleTexCoord() == false)
             {
                 MagicCore::RenderSystem::Get()->HideRenderingObject("TriMesh_TextureApp");
                 return;
@@ -648,7 +649,7 @@ namespace MagicApp
         std::vector<GPP::ImageColorId> originImageColorIds = ModelManager::Get()->GetImageColorIds();
         if (isByVertexColor)
         {
-            if (triMesh->HasColor() == false)
+            if (triMesh->HasVertexColor() == false)
             {
                 MessageBox(NULL, "输入需要带颜色的网格", "温馨提示", MB_OK);
                 return;
@@ -831,7 +832,7 @@ namespace MagicApp
                 MessageBox(NULL, "请先导入网格", "温馨提示", MB_OK);
                 return;
             }
-            if (triMesh->HasColor() == false)
+            if (triMesh->HasVertexColor() == false)
             {
                 MessageBox(NULL, "输入需要带颜色的网格", "温馨提示", MB_OK);
                 return;
@@ -843,6 +844,10 @@ namespace MagicApp
                 return;
             }
             std::vector<int> vertexFlags = ModelManager::Get()->GetImageColorIdFlags();
+            if (vertexFlags.empty())
+            {
+                vertexFlags.resize(triMesh->GetVertexCount(), 1);
+            }
             std::vector<std::string> textureImageFiles = ModelManager::Get()->GetTextureImageFiles();
             int imageCount = textureImageFiles.size();
             InfoLog << "imageCount=" << imageCount << std::endl;
@@ -1021,7 +1026,7 @@ namespace MagicApp
             std::vector<int> fixFlag = ModelManager::Get()->GetImageColorIdFlags();
             if (fixFlag.empty())
             {
-                MessageBox(NULL, "ImageColorIdFlags is empty", "温馨提示", MB_OK);
+                fixFlag.resize(triMesh->GetVertexCount(), 1);
                 return;
             }
 #if MAKEDUMPFILE
@@ -1152,7 +1157,7 @@ namespace MagicApp
             imageHList.at(fid) = imageList.at(fid).rows;
         }
         int vertexCount = triMesh->GetVertexCount();
-        triMesh->SetHasColor(true);
+        triMesh->SetHasVertexColor(true);
         for (int vid = 0; vid < vertexCount; vid++)
         {
             GPP::ImageColorId colorId = imageColorIds.at(vid);
@@ -1169,7 +1174,7 @@ namespace MagicApp
         UpdateDisplay();
     }
 
-    void TextureApp::FuseMeshColor(bool isSubThread)
+    void TextureApp::FuseMeshColor(double sharpDiff_H, double sharpDiff_S, double sharpDiff_V, bool isSubThread)
     {
         if (IsCommandAvaliable() == false)
         {
@@ -1178,6 +1183,7 @@ namespace MagicApp
         if (isSubThread)
         {
             mCommandType = FUSEMESHCOLOR;
+            mSharpDiff = GPP::Vector3(sharpDiff_H, sharpDiff_S, sharpDiff_V);
             DoCommand(true);
         }
         else
@@ -1196,7 +1202,7 @@ namespace MagicApp
                 return;
             }
             std::vector<GPP::Vector3> vertexColors(vertexCount);
-            if (triMesh->HasColor() == false)
+            if (triMesh->HasVertexColor() == false)
             {
                 MessageBox(NULL, "网格需要颜色", "温馨提示", MB_OK);
                 return;
@@ -1209,7 +1215,8 @@ namespace MagicApp
 #if MAKEDUMPFILE
             GPP::DumpOnce();
 #endif
-            GPP::ErrorCode res = GPP::IntrinsicColor::TuneMeshColorFromMultiPatch(triMesh, colorIds, vertexColors);
+            GPP::ErrorCode res = GPP::IntrinsicColor::TuneMeshColorFromMultiPatch(triMesh, colorIds, vertexColors,
+                GPP::Vector3(sharpDiff_H ,sharpDiff_S, sharpDiff_V));
             mIsCommandInProgress = false;
             if (res == GPP_API_IS_NOT_AVAILABLE)
             {

@@ -329,6 +329,10 @@ namespace MagicCore
                     {
                         color = *selectColor;
                     }
+                    else if (mesh->HasTriangleColor())
+                    {
+                        color = mesh->GetTriangleColor(fid, fvid);
+                    }
                     else
                     {
                         color = mesh->GetVertexColor(vertexIds[fvid]);

@@ -21,6 +21,8 @@ namespace GPP
         void GetParameters(Real parameters[4]) const;
         Real SignedDistance(const Vector3& point) const;
         Vector3 Intersection(const Vector3& startPoint, const Vector3& endPoint, Real* ratio) const;
+        Vector3 ProjectPoint(const Vector3& point) const;
+        Vector3 ProjectVector(const Vector3& vec3) const;
 
     private:
         Real mParameters[4];

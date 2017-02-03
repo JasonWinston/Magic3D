@@ -128,7 +128,7 @@ namespace MagicApp
                 GPP::Vector3 minCoord(-1.5, -1.5, -1.5);
                 double deltaLength = 0.3;
                 int maxColorId = 6;
-                triMesh->SetHasColor(true);
+                triMesh->SetHasVertexColor(true);
                 for (int vid = 0; vid < vertexCount; vid++)
                 {
                     GPP::Vector3 deltaCoord = triMesh->GetVertexCoord(vid) - minCoord;
@@ -498,7 +498,7 @@ namespace MagicApp
         Ogre::TextureManager::getSingleton().remove("DepthTexture");
 
         // point to color
-        if (triMesh->HasColor())
+        if (triMesh->HasVertexColor())
         {
             mpDepthPointCloud->SetHasColor(true);
             int pointCount = mpDepthPointCloud->GetPointCount();

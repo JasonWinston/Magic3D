@@ -27,6 +27,13 @@ namespace MagicApp
 
     public:
 
+        enum DeformType
+        {
+            DT_NONE = 0,
+            DT_CONTROL_POINT,
+            DT_VERTEX
+        };
+
         AnimationApp();
         ~AnimationApp();
 
@@ -39,22 +46,22 @@ namespace MagicApp
         virtual bool KeyPressed(const OIS::KeyEvent &arg);
 
         bool ImportModel(void);
+        void SwitchDeformType(DeformType dt);
+
         void InitControlPoint(int controlPointCount);
-        
         void SelectFreeControlPoint(void);
         void ClearFreeControlPoint(void);
         void MoveControlPoint(void);
-
-        void InitDeformation(void);
-        void DoDeformation(void);
-        void RealTimeDeform(void);
+        void InitControlDeformation(void);
+        void DoControlDeformation(void);
+        //void RealTimeDeform(void);
 
     private:
         void InitViewTool(void);
         
         void PickControlPoint(int mouseCoordX, int mouseCoordY);
         void DragControlPoint(int mouseCoordX, int mouseCoordY, bool mouseReleased);
-        void UpdateDeformation(int mouseCoordX, int mouseCoordY);
+        void UpdateDeformation(int mouseCoordX, int mouseCoordY, bool isAccurate);
         void SelectControlPointByRectangle(int startCoordX, int startCoordY, int endCoordX, int endCoordY);
         void UpdateRectangleRendering(int startCoordX, int startCoordY, int endCoordX, int endCoordY);
         void ClearRectangleRendering(void);
@@ -72,6 +79,7 @@ namespace MagicApp
     private:
         AnimationAppUI* mpUI;
         MagicCore::ViewTool* mpViewTool;
+        DeformType mDeformType;
         GPP::DeformPointList* mDeformPointList;
         GPP::DeformMesh* mDeformMesh;
         std::vector<GPP::Int> mControlIds;

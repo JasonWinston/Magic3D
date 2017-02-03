@@ -12,25 +12,23 @@
         <Widget type="Button" skin="But_Mesh_CN" position="118 25 43 43" align="Left Top" name="But_ImportMesh">
             <Property key="Visible" value="false"/>
         </Widget>
-        
-        <Widget type="Button" skin="But_Save" position="15 80 60 60" align="Left Top" name="But_ExportModel"/>
 
-        <Widget type="Button" skin="But_PointShop" position="15 145 60 60" align="Left Top" name="But_EnterPointShopApp"/>
+        <Widget type="Button" skin="But_PointShop" position="15 80 60 60" align="Left Top" name="But_EnterPointShopApp"/>
 
-        <Widget type="Button" skin="But_MeshTool" position="15 210 60 60" align="Left Top" name="But_EnterMeshShopApp"/>
+        <Widget type="Button" skin="But_MeshTool" position="15 145 60 60" align="Left Top" name="But_EnterMeshShopApp"/>
 
-        <Widget type="Button" skin="But_Align" position="15 275 60 60" align="Left Top" name="But_EnterRegistrationApp"/>
+        <Widget type="Button" skin="But_Align" position="15 210 60 60" align="Left Top" name="But_EnterRegistrationApp"/>
 
-        <Widget type="Button" skin="But_Resize" position="15 340 60 60" align="Left Top" name="But_EnterMeasureApp"/>
+        <Widget type="Button" skin="But_Resize" position="15 275 60 60" align="Left Top" name="But_EnterMeasureApp"/>
 
-        <Widget type="Button" skin="But_Deform" position="15 405 60 60" align="Left Top" name="But_EnterAnimationApp"/>
+        <Widget type="Button" skin="But_Deform" position="15 340 60 60" align="Left Top" name="But_EnterAnimationApp"/>
 
-        <Widget type="Button" skin="But_NormalMap" position="15 470 60 60" align="Left Top" name="But_EnterUVUnfoldApp"/>
+        <Widget type="Button" skin="But_NormalMap" position="15 405 60 60" align="Left Top" name="But_EnterUVUnfoldApp"/>
 
-        <Widget type="Button" skin="But_ImageTool" position="15 535 60 60" align="Left Top" name="But_EnterTextureApp"/>
+        <Widget type="Button" skin="But_ImageTool" position="15 470 60 60" align="Left Top" name="But_EnterTextureApp"/>
 
-        <Widget type="Button" skin="But_Relief" position="15 600 60 60" align="Left Top" name="But_EnterReliefApp"/>
+        <Widget type="Button" skin="But_Relief" position="15 535 60 60" align="Left Top" name="But_EnterReliefApp"/>
 
-        <Widget type="Button" skin="But_Contact" position="15 665 60 60" align="Left Top" name="But_Contact"/>
+        <Widget type="Button" skin="But_Contact" position="15 600 60 60" align="Left Top" name="But_Contact"/>
     </Widget>
 </MyGUI>

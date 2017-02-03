@@ -50,7 +50,8 @@ namespace MagicApp
         mSmoothCount(0),
         mNeighborCount(0),
         mColorNeighborCount(0),
-        mIsolateValue(0)
+        mIsolateValue(0),
+        mSharpDiff()
     {
     }
 
@@ -652,11 +653,25 @@ namespace MagicApp
             GPP::PointCloud* pointCloud = ModelManager::Get()->GetPointCloud();
             if (pointCloud)
             {
-                pointCloud->SetHasColor(true);
-                int pointCount = pointCloud->GetPointCount();
-                for (int pid = 0; pid < pointCount; pid++)
+                if (pointCloud->HasColor())
                 {
-                    pointCloud->SetPointColor(pid, GPP::Vector3(1.0, 0, 0));
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        GPP::Vector3 curColor = pointCloud->GetPointColor(pid);
+                        curColor = GPP::IntrinsicColor::ConvertRGB2HSV(curColor);
+                        curColor[0] /= 360;
+                        pointCloud->SetPointColor(pid, GPP::Vector3(curColor[0], curColor[0], curColor[0]));
+                    }
+                }
+                else
+                {
+                    pointCloud->SetHasColor(true);
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        pointCloud->SetPointColor(pid, GPP::Vector3(1.0, 0, 0));
+                    }
                 }
                 UpdatePointCloudRendering();
             }
@@ -666,11 +681,24 @@ namespace MagicApp
             GPP::PointCloud* pointCloud = ModelManager::Get()->GetPointCloud();
             if (pointCloud)
             {
-                pointCloud->SetHasColor(true);
-                int pointCount = pointCloud->GetPointCount();
-                for (int pid = 0; pid < pointCount; pid++)
+                if (pointCloud->HasColor())
                 {
-                    pointCloud->SetPointColor(pid, GPP::Vector3(0, 1.0, 0));
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        GPP::Vector3 curColor = pointCloud->GetPointColor(pid);
+                        curColor = GPP::IntrinsicColor::ConvertRGB2HSV(curColor);
+                        pointCloud->SetPointColor(pid, GPP::Vector3(curColor[1], curColor[1], curColor[1]));
+                    }
+                }
+                else
+                {
+                    pointCloud->SetHasColor(true);
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        pointCloud->SetPointColor(pid, GPP::Vector3(0, 1.0, 0));
+                    }
                 }
                 UpdatePointCloudRendering();
             }
@@ -680,18 +708,27 @@ namespace MagicApp
             GPP::PointCloud* pointCloud = ModelManager::Get()->GetPointCloud();
             if (pointCloud)
             {
-                pointCloud->SetHasColor(true);
-                int pointCount = pointCloud->GetPointCount();
-                for (int pid = 0; pid < pointCount; pid++)
+                if (pointCloud->HasColor())
                 {
-                    pointCloud->SetPointColor(pid, GPP::Vector3(0, 0, 1.0));
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        GPP::Vector3 curColor = pointCloud->GetPointColor(pid);
+                        curColor = GPP::IntrinsicColor::ConvertRGB2HSV(curColor);
+                        pointCloud->SetPointColor(pid, GPP::Vector3(curColor[2], curColor[2], curColor[2]));
+                    }
+                }
+                else
+                {
+                    pointCloud->SetHasColor(true);
+                    int pointCount = pointCloud->GetPointCount();
+                    for (int pid = 0; pid < pointCount; pid++)
+                    {
+                        pointCloud->SetPointColor(pid, GPP::Vector3(0, 0, 1.0));
+                    }
                 }
                 UpdatePointCloudRendering();
             }
-        }
-        else if (arg.key == OIS::KC_P)
-        {
-            PickPointCloudColorFromImages();
         }
         else if (arg.key == OIS::KC_X)
         {
@@ -750,42 +787,6 @@ namespace MagicApp
                 {
                     pointCloud->SetPointColor(pid, MagicCore::ToolKit::Get()->ColorCoding(0.2 + imageIndex % maxColorId * deltaColor));
                 }
-            }
-            UpdatePointCloudRendering();
-        }
-        else if (arg.key == OIS::KC_S)
-        {
-            GPP::PointCloud* pointCloud = ModelManager::Get()->GetPointCloud();
-            std::vector<int> cloudIds = ModelManager::Get()->GetCloudIds();
-            if (pointCloud == NULL || pointCloud->GetPointCount() != cloudIds.size())
-            {
-                return true;
-            }
-            pointCloud->SetHasColor(true);
-            int maxColorId = 10;
-            double deltaColor = 0.1;
-            int pointCount = pointCloud->GetPointCount();
-            for (int pid = 0; pid < pointCount; pid++)
-            {
-                pointCloud->SetPointColor(pid, MagicCore::ToolKit::Get()->ColorCoding(0.2 + cloudIds.at(pid) % maxColorId * deltaColor));
-            }
-            UpdatePointCloudRendering();
-        }
-        else if (arg.key == OIS::KC_A)
-        {
-            GPP::PointCloud* pointCloud = ModelManager::Get()->GetPointCloud();
-            std::vector<int> colorIds = ModelManager::Get()->GetColorIds();
-            if (pointCloud == NULL || pointCloud->GetPointCount() != colorIds.size())
-            {
-                return true;
-            }
-            pointCloud->SetHasColor(true);
-            int maxColorId = 10;
-            double deltaColor = 0.1;
-            int pointCount = pointCloud->GetPointCount();
-            for (int pid = 0; pid < pointCount; pid++)
-            {
-                pointCloud->SetPointColor(pid, MagicCore::ToolKit::Get()->ColorCoding(0.2 + colorIds.at(pid) % maxColorId * deltaColor));
             }
             UpdatePointCloudRendering();
         }
@@ -890,7 +891,7 @@ namespace MagicApp
                 SmoothPointCloudGeoemtry(mSmoothCount, false);
                 break;
             case MagicApp::PointShopApp::FUSECOLOR:
-                FusePointCloudColor(mColorNeighborCount, mSharpDiff, false);
+                FusePointCloudColor(mColorNeighborCount, mSharpDiff[0], mSharpDiff[1], mSharpDiff[2], false);
                 break;
             case MagicApp::PointShopApp::FUSETEXTURE:
                 FuseTextureImage(false);
@@ -1079,7 +1080,8 @@ namespace MagicApp
         }
     }
 
-    void PointShopApp::FusePointCloudColor(int neighborCount, double sharpDiff, bool isSubThread)
+    void PointShopApp::FusePointCloudColor(int neighborCount, double sharpDiff_H, double sharpDiff_S, 
+        double sharpDiff_V, bool isSubThread)
     {
         if (IsCommandAvaliable() == false)
         {
@@ -1089,7 +1091,7 @@ namespace MagicApp
         {
             mCommandType = FUSECOLOR;
             mColorNeighborCount = neighborCount;
-            mSharpDiff = sharpDiff;
+            mSharpDiff = GPP::Vector3(sharpDiff_H, sharpDiff_S, sharpDiff_V);
             DoCommand(true);
         }
         else
@@ -1118,7 +1120,7 @@ namespace MagicApp
             GPP::DumpOnce();
 #endif
             GPP::ErrorCode res = GPP::IntrinsicColor::TuneColorFromMultiFrame(pointCloud, neighborCount, 
-                colorIds, pointColors, sharpDiff);
+                colorIds, pointColors, GPP::Vector3(sharpDiff_H, sharpDiff_S, sharpDiff_V));
             mIsCommandInProgress = false;
             if (res == GPP_API_IS_NOT_AVAILABLE)
             {
@@ -1810,7 +1812,7 @@ namespace MagicApp
                     return;
                 }
                 GPP::Int vertexCount = triMesh->GetVertexCount();
-                triMesh->SetHasColor(true);
+                triMesh->SetHasVertexColor(true);
                 for (GPP::Int vid = 0; vid < vertexCount; vid++)
                 {
                     GPP::Int baseId = vid * 3;
@@ -1869,67 +1871,10 @@ namespace MagicApp
 #if DEBUGDUMPFILE
     void PointShopApp::SetDumpInfo(GPP::DumpBase* dumpInfo)
     {
-        /*if (dumpInfo == NULL)
-        {
-            return;
-        }
-        GPPFREEPOINTER(mpDumpInfo);
-        mpDumpInfo = dumpInfo;
-        if (mpDumpInfo->GetPointCloud() == NULL)
-        {
-            return;
-        }
-        GPPFREEPOINTER(mpPointCloud);
-        mpPointCloud = CopyPointCloud(mpDumpInfo->GetPointCloud());
-        UpdatePointCloudRendering();
-        if (mpPointCloud)
-        {
-            mpUI->SetPointCloudInfo(mpPointCloud->GetPointCount());
-        }*/
     }
 
     void PointShopApp::RunDumpInfo()
     {
-        /*if (mpDumpInfo == NULL)
-        {
-            return;
-        }
-        GPP::ErrorCode res = mpDumpInfo->Run();
-        if (res != GPP_NO_ERROR)
-        {
-            MessageBox(NULL, "Dump Run Failed", "ÎÂÜ°ÌáÊ¾", MB_OK);
-            return;
-        }
-        if (mpDumpInfo->GetTriMesh() != NULL)
-        {
-            GPP::TriMesh* triMesh = CopyTriMesh(mpDumpInfo->GetTriMesh());         
-            if (!triMesh)
-            {
-                return;
-            }
-            AppManager::Get()->EnterApp(new MeshShopApp, "MeshShopApp");
-            MeshShopApp* meshShop = dynamic_cast<MeshShopApp*>(AppManager::Get()->GetApp("MeshShopApp"));
-            if (meshShop)
-            {
-                triMesh->UpdateNormal();
-                meshShop->SetMesh(triMesh, mObjCenterCoord, mScaleValue);
-            }
-            else
-            {
-                GPPFREEPOINTER(triMesh);
-            }
-        }
-        else
-        {
-            GPPFREEPOINTER(mpPointCloud);
-            mpPointCloud = CopyPointCloud(mpDumpInfo->GetPointCloud());
-            UpdatePointCloudRendering();
-            GPPFREEPOINTER(mpDumpInfo);
-            if (mpPointCloud)
-            {
-                mpUI->SetPointCloudInfo(mpPointCloud->GetPointCount());
-            }
-        }*/
     }
 #endif
 

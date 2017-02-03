@@ -454,7 +454,7 @@ namespace MagicApp
                 return;
             }
             res = GPP::OptimiseMapping::TransferMappingToMesh(&fusedPointCloud, imageColorIds_point,
-                &triMesh, imageColorIds_mesh, 1.5, false);
+                &triMesh, imageColorIds_mesh, 1.5, true);
             if (res != GPP_NO_ERROR)
             {
                 MessageBox(NULL, "TransferMappingToMesh Failed", "温馨提示", MB_OK);
@@ -481,22 +481,16 @@ namespace MagicApp
         std::vector<GPP::Color4> imageData;
         std::vector<GPP::Int> textureImageMasks;
         {
+            int texCoordSize = texCoords.size() / 2;
+            std::vector<GPP::ImageColorId> imageColorIds(texCoordSize);
             int faceCount = triMesh.GetTriangleCount();
-            std::vector<GPP::ImageColorId> imageColorIds(faceCount * 3);
-            std::vector<int> textureIds(faceCount *  3);
-            std::vector<GPP::Real> textureCoords(faceCount * 3 * 2);
             GPP::Int vertexIds[3] = {-1};
             for (GPP::Int fid = 0; fid < faceCount; ++fid)
             {
                 triMesh.GetTriangleVertexIds(fid, vertexIds);
                 for (int fvid = 0; fvid < 3; ++fvid)
                 {
-                    GPP::Int baseIndex = fid * 3 + fvid;
-                    imageColorIds.at(baseIndex) = imageColorIds_mesh.at(vertexIds[fvid]);
-                    GPP::Int tid = faceTexIds.at(fid * 3 + fvid);
-                    textureCoords.at(baseIndex * 2) = texCoords.at(tid * 2);
-                    textureCoords.at(baseIndex * 2 + 1) = texCoords.at(tid * 2 + 1);
-                    textureIds.at(baseIndex) = baseIndex;
+                    imageColorIds.at(faceTexIds.at(fid * 3 + fvid)) = imageColorIds_mesh.at(vertexIds[fvid]);
                 }
             }
             int imageCount = textureImageFiles.size();
@@ -574,8 +568,7 @@ namespace MagicApp
                 }
             }
 
-            GPP::DumpOnce();
-            GPP::ErrorCode res = GPP::TextureImage::CreateTextureImageByRefImages(textureCoords, textureIds, imageColorIds, 
+            GPP::ErrorCode res = GPP::TextureImage::CreateTextureImageByRefImages(texCoords, faceTexIds, imageColorIds, 
                 imageListData, imageInfos, textureSize, textureSize, imageData, &textureImageMasks);
             if (res != GPP_NO_ERROR)
             {
@@ -1131,7 +1124,7 @@ namespace MagicApp
             GPP::Int pointCount = mpPointCloudRef->GetPointCount();
             std::vector<GPP::Real> uniformity;
             mIsCommandInProgress = true;
-            GPP::ErrorCode res = GPP::ConsolidatePointCloud::CalculateUniformity(mpPointCloudRef, &uniformity);
+            GPP::ErrorCode res = GPP::ConsolidatePointCloud::CalculateOutlier(mpPointCloudRef, &uniformity);
             if (res == GPP_API_IS_NOT_AVAILABLE)
             {
                 MessageBox(NULL, "软件试用时限到了，欢迎购买激活码", "温馨提示", MB_OK);
@@ -1562,6 +1555,7 @@ namespace MagicApp
             // Save result
             if (mSaveGlobalRegistrateResult)
             {
+#if DEVELOPSTATE
                 int pointListCount = pointCloudList.size();
                 for (int cloudid = 0; cloudid < pointListCount; cloudid++)
                 {
@@ -1573,6 +1567,7 @@ namespace MagicApp
                     ss >> fileName;
                     GPP::Parser::ExportPointCloud(fileName, curPointCloud);
                 }
+#endif
             }
             mIsCommandInProgress = false;
             mUpdatePointCloudListRendering = true;
@@ -1952,7 +1947,7 @@ namespace MagicApp
             GPP::Int pointCount = mpPointCloudFrom->GetPointCount();
             std::vector<GPP::Real> uniformity;
             mIsCommandInProgress = true;
-            GPP::ErrorCode res = GPP::ConsolidatePointCloud::CalculateUniformity(mpPointCloudFrom, &uniformity);
+            GPP::ErrorCode res = GPP::ConsolidatePointCloud::CalculateOutlier(mpPointCloudFrom, &uniformity);
             if (res == GPP_API_IS_NOT_AVAILABLE)
             {
                 MessageBox(NULL, "软件试用时限到了，欢迎购买激活码", "温馨提示", MB_OK);

@@ -64,4 +64,10 @@ namespace GPP
 
     extern ErrorCode ComputeTriangleNormal(const ITriMesh* triMesh, std::vector<Vector3>& normalList);
 
+    extern ErrorCode SmoothTriangleNormal(ITriMesh* triMesh, Real sharpAngle, Real positionWeight, 
+        std::vector<std::vector<Int> >* vertexFaces);
+
+    extern ErrorCode UpdateCoordByTriangleNormal(ITriMesh* triMesh, Int maxItrCount, 
+        const std::vector<std::vector<Int> >* vertexFaces);
+
 }

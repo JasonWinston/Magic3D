@@ -32,6 +32,7 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_LoadImageColorIds")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &TextureAppUI::LoadImageColorIds);
         mRoot.at(0)->findWidget("But_SaveImageColorIds")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &TextureAppUI::SaveImageColorIds);
 
+        mRoot.at(0)->findWidget("But_MeshColor")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &TextureAppUI::MeshColor);
         mRoot.at(0)->findWidget("But_FuseMeshColor")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &TextureAppUI::FuseMeshColor);
 
         mRoot.at(0)->findWidget("But_GenerateTextureImage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &TextureAppUI::GenerateTextureImage);
@@ -170,12 +171,77 @@ namespace MagicApp
         }
     }
 
+    void TextureAppUI::MeshColor(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_FuseMeshColor")->castType<MyGUI::Button>()->isVisible();
+        isVisible = !isVisible;
+        mRoot.at(0)->findWidget("But_FuseMeshColor")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            std::stringstream ss;
+            std::string textString;
+            ss << 0.2;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+
+            ss.clear();
+            textString.clear();
+            ss << 1.0;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+
+            ss.clear();
+            textString.clear();
+            ss << 0.5;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+        }
+    }
+
     void TextureAppUI::FuseMeshColor(MyGUI::Widget* pSender)
     {
         TextureApp* textureApp = dynamic_cast<TextureApp* >(AppManager::Get()->GetApp("TextureApp"));
         if (textureApp != NULL)
         {
-            textureApp->FuseMeshColor(true);
+            std::string textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_H = std::atof(textString.c_str());
+
+            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_S = std::atof(textString.c_str());
+
+            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_V = std::atof(textString.c_str());
+
+            if (sharpDiff_H < 0 || sharpDiff_H > 1.0 || sharpDiff_S < 0 || sharpDiff_S > 1.0 || sharpDiff_V < 0 || sharpDiff_V > 1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 0.2;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+                ss.clear();
+                textString.clear();
+                ss << 1.0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+                ss.clear();
+                textString.clear();
+                ss << 0.5;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                textureApp->FuseMeshColor(sharpDiff_H, sharpDiff_S, sharpDiff_V, true);
+            }
         }
     }
 

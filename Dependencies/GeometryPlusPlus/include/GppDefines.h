@@ -59,14 +59,4 @@ namespace GPP
     extern GPP_EXPORT const UInt UINT_LARGE;    
     extern GPP_EXPORT const Real GPP_PI;
     extern GPP_EXPORT const Real ONE_RADIAN;
-
-    // Reset progress value before calling api
-    extern GPP_EXPORT void ResetApiProgress(void);
-
-    // Get progress value when running api
-    // progress value range: [0, 1]
-    extern GPP_EXPORT Real GetApiProgress(void);
-
-    // Active library:
-    extern GPP_EXPORT bool SetActivationKey(std::string key);
 }

@@ -47,7 +47,8 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_MeasureRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureModel);
         mRoot.at(0)->findWidget("But_AreaRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureArea);
         mRoot.at(0)->findWidget("But_VolumeRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureVolume);
-        mRoot.at(0)->findWidget("But_CurvatureRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureCurvature);
+        mRoot.at(0)->findWidget("But_MeanCurvature")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureMeanCurvature);
+        mRoot.at(0)->findWidget("But_GaussianCurvature")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureGaussianCurvature);
         mRoot.at(0)->findWidget("But_PrincipalCurvature")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasurePrincipalCurvature);
         mRoot.at(0)->findWidget("But_Thickness")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureThickness);
 
@@ -184,6 +185,13 @@ namespace MagicApp
             mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
         }
+        mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            std::string textString = "0";
+            mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+        }
     }
 
     void MeasureAppUI::DeleteMeshMark(MyGUI::Widget* pSender)
@@ -243,7 +251,10 @@ namespace MagicApp
                 mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setOnlyText(newStr);
                 return;
             }
-            measureShop->ComputeCurvatureGeodesics(weight, true);
+            textString = mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->getOnlyText();
+            int curvatureType = std::atoi(textString.c_str());
+            curvatureType = curvatureType > 0 ? 1 : (curvatureType < 0 ? -1 : 0);
+            measureShop->ComputeCurvatureGeodesics(curvatureType, weight, true);
         }
     }
 
@@ -261,7 +272,8 @@ namespace MagicApp
         bool isVisible = mRoot.at(0)->findWidget("But_AreaRef")->castType<MyGUI::Button>()->isVisible();
         mRoot.at(0)->findWidget("But_AreaRef")->castType<MyGUI::Button>()->setVisible(!isVisible);
         mRoot.at(0)->findWidget("But_VolumeRef")->castType<MyGUI::Button>()->setVisible(!isVisible);
-        mRoot.at(0)->findWidget("But_CurvatureRef")->castType<MyGUI::Button>()->setVisible(!isVisible);
+        mRoot.at(0)->findWidget("But_MeanCurvature")->castType<MyGUI::Button>()->setVisible(!isVisible);
+        mRoot.at(0)->findWidget("But_GaussianCurvature")->castType<MyGUI::Button>()->setVisible(!isVisible);
         mRoot.at(0)->findWidget("But_PrincipalCurvature")->castType<MyGUI::Button>()->setVisible(!isVisible);
         mRoot.at(0)->findWidget("But_Thickness")->castType<MyGUI::Button>()->setVisible(!isVisible);
     }
@@ -284,12 +296,21 @@ namespace MagicApp
         }
     }
 
-    void MeasureAppUI::MeasureCurvature(MyGUI::Widget* pSender)
+    void MeasureAppUI::MeasureMeanCurvature(MyGUI::Widget* pSender)
     {
         MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
         if (measureShop != NULL)
         {
-            measureShop->MeasureCurvature();
+            measureShop->MeasureMeanCurvature();
+        }
+    }
+
+    void MeasureAppUI::MeasureGaussianCurvature(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->MeasureGaussianCurvature();
         }
     }
 

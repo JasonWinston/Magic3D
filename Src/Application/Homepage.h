@@ -31,7 +31,7 @@ namespace MagicApp
 
         void ImportPointCloud(void);
         void ImportMesh(void);
-        void ExportModel(void);
+        void ExportModel(bool unify);
 
     private:
         void SetupScene(void);

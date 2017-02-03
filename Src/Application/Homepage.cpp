@@ -126,6 +126,18 @@ namespace MagicApp
         {
             AppManager::Get()->EnterApp(new DepthVideoApp, "DepthVideoApp");
         }
+        else if (arg.key == OIS::KC_U)
+        {
+#if DEVELOPSTATE
+            ExportModel(true);
+#endif
+        }
+        else if (arg.key == OIS::KC_S)
+        {
+#if DEVELOPSTATE
+            ExportModel(false);
+#endif
+        }
         return true;
     }
 
@@ -213,7 +225,7 @@ namespace MagicApp
         if (res != GPP_NO_ERROR)
         {
             MessageBox(NULL, "dump文件执行失败", "温馨提示", MB_OK);
-            return;
+            //return;
         }
         else
         {
@@ -236,6 +248,10 @@ namespace MagicApp
             ModelManager::Get()->SetMesh(copiedTriMesh);
             ModelManager::Get()->ClearPointCloud();
             UpdateModelRendering();
+            if (GPP::ConsolidateMesh::_IsTriMeshManifold(copiedTriMesh) == false)
+            {
+                MessageBox(NULL, "网格有非流形结构", "温馨提示", MB_OK);
+            }
         }
     }
 #endif
@@ -309,7 +325,7 @@ namespace MagicApp
         }
     }
 
-    void Homepage::ExportModel()
+    void Homepage::ExportModel(bool unify)
     {
         GPP::TriMesh* triMesh = ModelManager::Get()->GetMesh();
         if (triMesh)
@@ -324,11 +340,19 @@ namespace MagicApp
                     MessageBox(NULL, "请输入文件后缀名", "温馨提示", MB_OK);
                     return;
                 }
-                GPP::Real scaleValue = ModelManager::Get()->GetScaleValue();
-                GPP::Vector3 objCenterCoord = ModelManager::Get()->GetObjCenterCoord();
-                triMesh->UnifyCoords(1.0 / scaleValue, objCenterCoord * (-scaleValue));
-                GPP::ErrorCode res = GPP::Parser::ExportTriMesh(fileName, triMesh);
-                triMesh->UnifyCoords(scaleValue, objCenterCoord);
+                GPP::ErrorCode res = GPP_NO_ERROR;
+                if (unify)
+                {
+                    GPP::Real scaleValue = ModelManager::Get()->GetScaleValue();
+                    GPP::Vector3 objCenterCoord = ModelManager::Get()->GetObjCenterCoord();
+                    triMesh->UnifyCoords(1.0 / scaleValue, objCenterCoord * (-scaleValue));
+                    res = GPP::Parser::ExportTriMesh(fileName, triMesh);
+                    triMesh->UnifyCoords(scaleValue, objCenterCoord);
+                }
+                else
+                {
+                    res = GPP::Parser::ExportTriMesh(fileName, triMesh);
+                }
                 if (res != GPP_NO_ERROR)
                 {
                     MessageBox(NULL, "网格导出失败", "温馨提示", MB_OK);
@@ -350,11 +374,19 @@ namespace MagicApp
                         MessageBox(NULL, "请输入文件后缀名", "温馨提示", MB_OK);
                         return;
                     }
-                    GPP::Real scaleValue = ModelManager::Get()->GetScaleValue();
-                    GPP::Vector3 objCenterCoord = ModelManager::Get()->GetObjCenterCoord();
-                    pointCloud->UnifyCoords(1.0 / scaleValue, objCenterCoord * (-scaleValue));
-                    GPP::ErrorCode res = GPP::Parser::ExportPointCloud(fileName, pointCloud);
-                    pointCloud->UnifyCoords(scaleValue, objCenterCoord);
+                    GPP::ErrorCode res = GPP_NO_ERROR;
+                    if (unify)
+                    {
+                        GPP::Real scaleValue = ModelManager::Get()->GetScaleValue();
+                        GPP::Vector3 objCenterCoord = ModelManager::Get()->GetObjCenterCoord();
+                        pointCloud->UnifyCoords(1.0 / scaleValue, objCenterCoord * (-scaleValue));
+                        res = GPP::Parser::ExportPointCloud(fileName, pointCloud);
+                        pointCloud->UnifyCoords(scaleValue, objCenterCoord);
+                    }
+                    else
+                    {
+                        res = GPP::Parser::ExportPointCloud(fileName, pointCloud);
+                    }
                     if (res != GPP_NO_ERROR)
                     {
                         MessageBox(NULL, "导出点云失败", "温馨提示", MB_OK);

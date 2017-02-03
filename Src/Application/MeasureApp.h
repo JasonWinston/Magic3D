@@ -53,7 +53,7 @@ namespace MagicApp
         void ComputeApproximateGeodesics(bool isSubThread = true);
         void FastComputeExactGeodesics(double accuracy, bool isSubThread = true);
         void ComputeExactGeodesics(bool isSubThread = true);
-        void ComputeCurvatureGeodesics(double curvatureWeight, bool isSubThread = true);
+        void ComputeCurvatureGeodesics(int curvatureType, double curvatureWeight, bool isSubThread = true);
         void SmoothGeodesicsOnVertex(void);
         
         void ComputePointsToMeshDistance(bool isSubThread = true);
@@ -61,7 +61,8 @@ namespace MagicApp
 
         void MeasureArea(void);
         void MeasureVolume(void);
-        void MeasureCurvature(void);
+        void MeasureMeanCurvature(void);
+        void MeasureGaussianCurvature(void);
         void MeasurePrincipalCurvature(bool isSubThread = true);
         void MeasureThickness(bool isSubThread = true);
 
@@ -110,5 +111,6 @@ namespace MagicApp
         int mDisplayPrincipalCurvature;
         GPP::Real mCurvatureWeight;
         bool mIsGeodesicsClose;
+        int mCurvatureType;
     };
 }

@@ -44,7 +44,8 @@ namespace MagicApp
         void MeasureModel(MyGUI::Widget* pSender);
         void MeasureArea(MyGUI::Widget* pSender);
         void MeasureVolume(MyGUI::Widget* pSender);
-        void MeasureCurvature(MyGUI::Widget* pSender);
+        void MeasureMeanCurvature(MyGUI::Widget* pSender);
+        void MeasureGaussianCurvature(MyGUI::Widget* pSender);
         void MeasurePrincipalCurvature(MyGUI::Widget* pSender);
         void MeasureThickness(MyGUI::Widget* pSender);
 

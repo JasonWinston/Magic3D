@@ -73,7 +73,7 @@ namespace MagicCore
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "ReverseDirection", &MagicApp::MeshShopApp::ReverseDirection);
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "RemoveMeshIsolatePart", &MagicApp::MeshShopApp::RemoveMeshIsolatePart);
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "ConsolidateGeometry", &MagicApp::MeshShopApp::ConsolidateGeometry);
-        lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "OptimizeMesh", &MagicApp::MeshShopApp::OptimizeMesh);
+        //lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "OptimizeMesh", &MagicApp::MeshShopApp::OptimizeMesh);
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "RemoveMeshNoise", &MagicApp::MeshShopApp::RemoveMeshNoise);
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "SmoothMesh", &MagicApp::MeshShopApp::SmoothMesh);
         lua_tinker::class_def<MagicApp::MeshShopApp>(mpLuaState, "EnhanceMeshDetail", &MagicApp::MeshShopApp::EnhanceMeshDetail);

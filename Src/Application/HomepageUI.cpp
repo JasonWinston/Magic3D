@@ -32,7 +32,6 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_ImportModel")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::ImportModel);
         mRoot.at(0)->findWidget("But_ImportPointCloud")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::ImportPointCloud);
         mRoot.at(0)->findWidget("But_ImportMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::ImportMesh);
-        mRoot.at(0)->findWidget("But_ExportModel")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::ExportModel);
         mRoot.at(0)->findWidget("But_EnterPointShopApp")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::EnterPointShopApp);
         mRoot.at(0)->findWidget("But_EnterMeshShopApp")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::EnterMeshShopApp);
         mRoot.at(0)->findWidget("But_EnterRegistrationApp")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &HomepageUI::EnterRegistrationApp);
@@ -100,15 +99,6 @@ namespace MagicApp
         if (homepage != NULL)
         {
             homepage->ImportMesh();
-        }
-    }
-
-    void HomepageUI::ExportModel(MyGUI::Widget* pSender)
-    {
-        Homepage* homepage = dynamic_cast<Homepage* >(AppManager::Get()->GetApp("Homepage"));
-        if (homepage != NULL)
-        {
-            homepage->ExportModel();
         }
     }
 

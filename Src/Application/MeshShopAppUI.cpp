@@ -25,20 +25,24 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_DisplayMode")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SwitchDisplayMode);
         mRoot.at(0)->findWidget("But_ImportMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ImportMesh);
         mRoot.at(0)->findWidget("But_ConsolidateMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ConsolidateMesh);
+        mRoot.at(0)->findWidget("But_IsManifold")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::IsManifold);
         mRoot.at(0)->findWidget("But_ConsolidateTopology")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ConsolidateTopology);
         mRoot.at(0)->findWidget("But_ReverseDirection")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ReverseDirection);
         mRoot.at(0)->findWidget("But_RemoveMeshIsolatePart")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::RemoveMeshIsolatePart);
         mRoot.at(0)->findWidget("But_ConsolidateGeometry")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ConsolidateGeometry);
-        mRoot.at(0)->findWidget("But_OptimizeMeshConnectivity")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::OptimizeMesh);
+        mRoot.at(0)->findWidget("But_CDTOptimization")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CDTOptimization);
+        mRoot.at(0)->findWidget("But_CVTOptimization")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CVTOptimization);
+        
         mRoot.at(0)->findWidget("But_FilterMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::FilterMesh);
         mRoot.at(0)->findWidget("But_RemoveMeshNoise")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::RemoveMeshNoise);
         mRoot.at(0)->findWidget("But_SmoothMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SmoothMesh);
         mRoot.at(0)->findWidget("But_EnhanceMeshDetail")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::EnhanceMeshDetail);
-        mRoot.at(0)->findWidget("But_SubdivideMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SubdivideMesh);
-        mRoot.at(0)->findWidget("But_RefineMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::RefineMesh);
-        mRoot.at(0)->findWidget("But_DoRefineMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::DoRefineMesh);
-        mRoot.at(0)->findWidget("But_SimplifyMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SimplifyMesh);
+        
+        mRoot.at(0)->findWidget("But_ChangeVertexCount")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::ChangeVertexCount);
         mRoot.at(0)->findWidget("But_DoSimplifyMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::DoSimplifyMesh);
+        mRoot.at(0)->findWidget("But_DoRefineMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::DoRefineMesh);
+        mRoot.at(0)->findWidget("But_DoSubdivideMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SubdivideMesh);
+        
         mRoot.at(0)->findWidget("But_ReMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::Remesh);
         mRoot.at(0)->findWidget("But_DoUniformRemesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::DoUniformRemesh);
         mRoot.at(0)->findWidget("But_FillHole")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::FillHole);
@@ -56,6 +60,13 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_SimplifySelections")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SimplifySelections);
         mRoot.at(0)->findWidget("But_IgnoreBack")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::IgnoreBack);
         mRoot.at(0)->findWidget("But_MoveModel")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::MoveModel);        
+        
+        mRoot.at(0)->findWidget("But_CutMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CutMesh);        
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_XY")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CutMeshByXYPlane);        
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_YZ")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CutMeshByYZPlane);        
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_ZX")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CutMeshByZXPlane);        
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_Random")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::CutMeshByRandomPlane);        
+
         mRoot.at(0)->findWidget("But_SampleMesh")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::SampleMesh);        
         mRoot.at(0)->findWidget("But_DoUniformSampling")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::DoUniformSampling);
         mRoot.at(0)->findWidget("But_BackToHomepage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeshShopAppUI::BackToHomepage);
@@ -138,11 +149,41 @@ namespace MagicApp
     void MeshShopAppUI::ConsolidateMesh(MyGUI::Widget* pSender)
     {
         bool isVisible = mRoot.at(0)->findWidget("But_ConsolidateTopology")->castType<MyGUI::Button>()->isVisible();
-        mRoot.at(0)->findWidget("But_ConsolidateTopology")->castType<MyGUI::Button>()->setVisible(!isVisible);
-        mRoot.at(0)->findWidget("But_ReverseDirection")->castType<MyGUI::Button>()->setVisible(!isVisible);
-        mRoot.at(0)->findWidget("But_ConsolidateGeometry")->castType<MyGUI::Button>()->setVisible(!isVisible);
-        mRoot.at(0)->findWidget("But_RemoveMeshIsolatePart")->castType<MyGUI::Button>()->setVisible(!isVisible);
-        mRoot.at(0)->findWidget("But_OptimizeMeshConnectivity")->castType<MyGUI::Button>()->setVisible(!isVisible);
+        isVisible = !isVisible;
+        mRoot.at(0)->findWidget("But_IsManifold")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_ConsolidateTopology")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_ReverseDirection")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_ConsolidateGeometry")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_RemoveMeshIsolatePart")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_CDTOptimization")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_CDTSharpAngle")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            std::stringstream ss;
+            ss << 30;
+            std::string textString;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_CDTSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+        }
+        mRoot.at(0)->findWidget("But_CVTOptimization")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_CVTSharpAngle")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            std::stringstream ss;
+            ss << 30;
+            std::string textString;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_CVTSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+        }
+    }
+
+    void MeshShopAppUI::IsManifold(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            meshShop->IsManifold();
+        }
     }
 
     void MeshShopAppUI::ConsolidateTopology(MyGUI::Widget* pSender)
@@ -172,12 +213,47 @@ namespace MagicApp
         }
     }
 
-    void MeshShopAppUI::OptimizeMesh(MyGUI::Widget* pSender)
+    void MeshShopAppUI::CDTOptimization(MyGUI::Widget* pSender)
     {
         MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
         if (meshShop != NULL)
         {
-            meshShop->OptimizeMesh();
+            std::string textString = mRoot.at(0)->findWidget("Edit_CDTSharpAngle")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpAngle = std::atof(textString.c_str());
+            if (sharpAngle < 0 || sharpAngle > 180)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 30;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_CDTSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->CDTOptimization(sharpAngle, true);
+            }
+        }
+    }
+
+    void MeshShopAppUI::CVTOptimization(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            std::string textString = mRoot.at(0)->findWidget("Edit_CVTSharpAngle")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpAngle = std::atof(textString.c_str());
+            if (sharpAngle < 0 || sharpAngle > 180)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 30;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_CVTSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->CVTOptimization(sharpAngle, true);
+            }
         }
     }
 
@@ -198,6 +274,7 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_SmoothMesh")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("But_RemoveMeshNoise")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("But_EnhanceMeshDetail")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_EnhanceIntensity")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
         {
             std::stringstream ss;
@@ -205,6 +282,12 @@ namespace MagicApp
             ss << 1;
             ss >> textString;
             mRoot.at(0)->findWidget("Edit_FilterPositionWeight")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+            ss.clear();
+            ss << 2;
+            textString.clear();
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_EnhanceIntensity")->castType<MyGUI::EditBox>()->setOnlyText(textString);
         }
     }
 
@@ -257,24 +340,30 @@ namespace MagicApp
         MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
         if (meshShop != NULL)
         {
-            meshShop->EnhanceMeshDetail();
+            std::string textString = mRoot.at(0)->findWidget("Edit_EnhanceIntensity")->castType<MyGUI::EditBox>()->getOnlyText();
+            double intensity = std::atof(textString.c_str());
+            if (intensity < 1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 2;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_EnhanceIntensity")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->EnhanceMeshDetail(intensity, true);
+            }          
         }
     }
 
-    void MeshShopAppUI::SubdivideMesh(MyGUI::Widget* pSender)
+    void MeshShopAppUI::ChangeVertexCount(MyGUI::Widget* pSender)
     {
-        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
-        if (meshShop != NULL)
-        {
-            meshShop->LoopSubdivide();
-        }        
-    }
-
-    void MeshShopAppUI::RefineMesh(MyGUI::Widget* pSender)
-    {
-        bool isVisible = mRoot.at(0)->findWidget("But_DoRefineMesh")->castType<MyGUI::Button>()->isVisible();
+        bool isVisible = mRoot.at(0)->findWidget("But_DoSimplifyMesh")->castType<MyGUI::Button>()->isVisible();
         isVisible = !isVisible;
+        mRoot.at(0)->findWidget("But_DoSimplifyMesh")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("But_DoRefineMesh")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_DoSubdivideMesh")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("Edit_RefineTargetVertexCount")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
         {
@@ -290,6 +379,15 @@ namespace MagicApp
             ss >> textString;
             mRoot.at(0)->findWidget("Edit_RefineTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
         }
+    }
+
+    void MeshShopAppUI::SubdivideMesh(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            meshShop->LoopSubdivide();
+        }        
     }
 
     void MeshShopAppUI::DoRefineMesh(MyGUI::Widget* pSender)
@@ -315,35 +413,13 @@ namespace MagicApp
         }
     }
 
-    void MeshShopAppUI::SimplifyMesh(MyGUI::Widget* pSender)
-    {
-        bool isVisible = mRoot.at(0)->findWidget("But_DoSimplifyMesh")->castType<MyGUI::Button>()->isVisible();
-        isVisible = !isVisible;
-        mRoot.at(0)->findWidget("But_DoSimplifyMesh")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("Edit_SimplifyTargetVertexCount")->castType<MyGUI::EditBox>()->setVisible(isVisible);
-        if (isVisible)
-        {
-            int meshVertexCount = 0;
-            MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
-            if (meshShop != NULL)
-            {
-                meshVertexCount = meshShop->GetMeshVertexCount();
-            }
-            std::stringstream ss;
-            std::string textString;
-            ss << meshVertexCount;
-            ss >> textString;
-            mRoot.at(0)->findWidget("Edit_SimplifyTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
-        }
-    }
-
     void MeshShopAppUI::DoSimplifyMesh(MyGUI::Widget* pSender)
     {
         MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
         if (meshShop != NULL)
         {
             int meshVertexCount = meshShop->GetMeshVertexCount();
-            std::string textString = mRoot.at(0)->findWidget("Edit_SimplifyTargetVertexCount")->castType<MyGUI::EditBox>()->getOnlyText();
+            std::string textString = mRoot.at(0)->findWidget("Edit_RefineTargetVertexCount")->castType<MyGUI::EditBox>()->getOnlyText();
             int targetVertexCount = std::atoi(textString.c_str());
             if (targetVertexCount > meshVertexCount || targetVertexCount < 3)
             {
@@ -351,7 +427,7 @@ namespace MagicApp
                 std::string textString;
                 ss << meshVertexCount;
                 ss >> textString;
-                mRoot.at(0)->findWidget("Edit_SimplifyTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+                mRoot.at(0)->findWidget("Edit_RefineTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             }
             else
             {
@@ -366,6 +442,7 @@ namespace MagicApp
         isVisible = !isVisible;
         mRoot.at(0)->findWidget("But_DoUniformRemesh")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("Edit_RemeshTargetVertexCount")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_RemeshSharpAngle")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
         {
             int meshVertexCount = 0;
@@ -379,6 +456,12 @@ namespace MagicApp
             ss << meshVertexCount;
             ss >> textString;
             mRoot.at(0)->findWidget("Edit_RemeshTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+            ss.clear();
+            ss << 30;
+            textString.clear();
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_RemeshSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
         }
     }
 
@@ -387,20 +470,33 @@ namespace MagicApp
         MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
         if (meshShop != NULL)
         {
+            bool isValid = true;
             int meshVertexCount = meshShop->GetMeshVertexCount();
             std::string textString = mRoot.at(0)->findWidget("Edit_RemeshTargetVertexCount")->castType<MyGUI::EditBox>()->getOnlyText();
             int targetVertexCount = std::atoi(textString.c_str());
             if (targetVertexCount < 3)
             {
+                isValid = false;
                 std::stringstream ss;
                 std::string textString;
                 ss << meshVertexCount;
                 ss >> textString;
                 mRoot.at(0)->findWidget("Edit_RemeshTargetVertexCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             }
-            else
+            textString = mRoot.at(0)->findWidget("Edit_RemeshSharpAngle")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpAngle = std::atof(textString.c_str());
+            if (sharpAngle < 0 || sharpAngle > 180)
             {
-                meshShop->UniformRemesh(targetVertexCount);
+                isValid = false;
+                std::stringstream ss;
+                std::string textString;
+                ss << 30;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_RemeshSharpAngle")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            if (isValid)
+            {
+                meshShop->UniformRemesh(targetVertexCount, sharpAngle);
             }            
         }
     }
@@ -619,6 +715,113 @@ namespace MagicApp
         if (meshShop != NULL)
         {
             meshShop->MoveModel();
+        }
+    }
+
+    void MeshShopAppUI::CutMesh(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_CutMesh_Plane_XY")->castType<MyGUI::Button>()->isVisible();
+        isVisible = !isVisible;
+        mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_XY")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_YZ")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_ZX")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_CutMesh_Plane_Random")->castType<MyGUI::Button>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            std::stringstream ss;
+            std::string textString;
+            ss << 0;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+        }
+    }
+
+    void MeshShopAppUI::CutMeshByXYPlane(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            std::string textString = mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->getOnlyText();
+            double offsetValue = std::atof(textString.c_str());
+            if (offsetValue > 1.0 || offsetValue < -1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->SplitMeshByPlane(MeshShopApp::ST_PLANE_XY, offsetValue);
+            }
+        }
+    }
+
+    void MeshShopAppUI::CutMeshByYZPlane(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            std::string textString = mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->getOnlyText();
+            double offsetValue = std::atof(textString.c_str());
+            if (offsetValue > 1.0 || offsetValue < -1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->SplitMeshByPlane(MeshShopApp::ST_PLANE_YZ, offsetValue);
+            }
+        }
+    }
+
+    void MeshShopAppUI::CutMeshByZXPlane(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            std::string textString = mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->getOnlyText();
+            double offsetValue = std::atof(textString.c_str());
+            if (offsetValue > 1.0 || offsetValue < -1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->SplitMeshByPlane(MeshShopApp::ST_PLANE_ZX, offsetValue);
+            }
+        }
+    }
+
+    void MeshShopAppUI::CutMeshByRandomPlane(MyGUI::Widget* pSender)
+    {
+        MeshShopApp* meshShop = dynamic_cast<MeshShopApp* >(AppManager::Get()->GetApp("MeshShopApp"));
+        if (meshShop != NULL)
+        {
+            std::string textString = mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->getOnlyText();
+            double offsetValue = std::atof(textString.c_str());
+            if (offsetValue > 1.0 || offsetValue < -1.0)
+            {
+                std::stringstream ss;
+                std::string textString;
+                ss << 0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_PlaneOffsetValue")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            }
+            else
+            {
+                meshShop->SplitMeshByPlane(MeshShopApp::ST_PLANE_RANDOM, offsetValue);
+            }
         }
     }
 

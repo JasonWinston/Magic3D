@@ -16,6 +16,7 @@ namespace MagicApp
     AnimationApp::AnimationApp() :
         mpUI(NULL),
         mpViewTool(NULL),
+        mDeformType(DT_NONE),
         mDeformPointList(NULL),
         mDeformMesh(NULL),
         mControlIds(),
@@ -61,6 +62,7 @@ namespace MagicApp
         mPickControlId = -1;
         mTargetControlCoords.clear();
         mTargetControlIds.clear();
+        mTargetControlCoords.clear();
         mControlIds.clear();
         GPPFREEPOINTER(mDeformPointList);
     }
@@ -68,9 +70,11 @@ namespace MagicApp
     void AnimationApp::ClearMeshData()
     {
         mIsDeformationInitialised = false;
+        mDeformType = DT_NONE;
         mPickControlId = -1;
         mTargetControlCoords.clear();
         mTargetControlIds.clear();
+        mTargetControlCoords.clear();
         mControlIds.clear();
         GPPFREEPOINTER(mDeformMesh);
     }
@@ -230,7 +234,7 @@ namespace MagicApp
         UpdateControlRendering();
     }
 
-    void AnimationApp::UpdateDeformation(int mouseCoordX, int mouseCoordY)
+    void AnimationApp::UpdateDeformation(int mouseCoordX, int mouseCoordY, bool isAccurate)
     {
         if (mPickControlId == -1 || mControlFlags.at(mPickControlId) != 2)
         {
@@ -275,7 +279,15 @@ namespace MagicApp
         {
             std::vector<int> targetVertexIds;
             targetVertexIds.push_back(mControlIds.at(mPickControlId));
-            res = mDeformMesh->Deform(targetVertexIds, targetCoords);
+            if (isAccurate)
+            {
+                res = mDeformMesh->Deform(targetVertexIds, targetCoords, GPP::DEFORM_MESH_TYPE_ACCURATE);
+            }
+            else
+            {
+                res = mDeformMesh->Deform(targetVertexIds, targetCoords, GPP::DEFORM_MESH_TYPE_FAST);
+            }
+            ModelManager::Get()->GetMesh()->UpdateNormal();
         }
         if (res != GPP_NO_ERROR)
         {
@@ -399,7 +411,7 @@ namespace MagicApp
             }
             else if (mRightMouseType == DEFORM && mPickControlId >= 0)
             {
-                UpdateDeformation(arg.state.X.abs, arg.state.Y.abs);
+                UpdateDeformation(arg.state.X.abs, arg.state.Y.abs, false);
             }
             else if (mRightMouseType == MOVE && mPickControlId >= 0)
             {
@@ -447,7 +459,7 @@ namespace MagicApp
             }
             else if (mRightMouseType == DEFORM && mPickControlId >= 0)
             {
-                UpdateDeformation(arg.state.X.abs, arg.state.Y.abs);
+                UpdateDeformation(arg.state.X.abs, arg.state.Y.abs, true);
                 mPickControlId = -1;
             }
             else if (mRightMouseType == MOVE && mPickControlId >= 0)
@@ -461,6 +473,33 @@ namespace MagicApp
 
     bool AnimationApp::KeyPressed( const OIS::KeyEvent &arg )
     {
+        if (arg.key == OIS::KC_F)
+        {
+            MagicCore::RenderSystem::Get()->GetMainCamera()->setPolygonMode(Ogre::PolygonMode::PM_SOLID);
+            Ogre::Material* material = dynamic_cast<Ogre::Material*>(Ogre::MaterialManager::getSingleton().getByName("CookTorrance").getPointer());
+            if (material)
+            {
+                material->setCullingMode(Ogre::CullingMode::CULL_NONE);
+            }
+        }
+        else if (arg.key == OIS::KC_E)
+        {
+            MagicCore::RenderSystem::Get()->GetMainCamera()->setPolygonMode(Ogre::PolygonMode::PM_WIREFRAME);
+            Ogre::Material* material = dynamic_cast<Ogre::Material*>(Ogre::MaterialManager::getSingleton().getByName("CookTorrance").getPointer());
+            if (material)
+            {
+                material->setCullingMode(Ogre::CullingMode::CULL_CLOCKWISE);
+            }
+        }
+        else if (arg.key == OIS::KC_V)
+        {
+            MagicCore::RenderSystem::Get()->GetMainCamera()->setPolygonMode(Ogre::PolygonMode::PM_POINTS);
+            Ogre::Material* material = dynamic_cast<Ogre::Material*>(Ogre::MaterialManager::getSingleton().getByName("CookTorrance").getPointer());
+            if (material)
+            {
+                material->setCullingMode(Ogre::CullingMode::CULL_CLOCKWISE);
+            }
+        }
         return true;
     }
 
@@ -480,10 +519,6 @@ namespace MagicApp
             bool updateMark = false;
             if (extName == std::string("obj") || extName == std::string("stl") || extName == std::string("off") || extName == std::string("ply"))
             {
-                {
-                    MessageBox(NULL, "网格变形正在升级中，可以使用点云变形", "温馨提示", MB_OK);
-                    return false;
-                }
                 ModelManager::Get()->ClearPointCloud();
                 if (ModelManager::Get()->ImportMesh(fileName) == false)
                 {
@@ -492,10 +527,11 @@ namespace MagicApp
                 }
                     
                 // Clear Data
+                ClearMeshData();
                 ClearPointCloudData();
-                GPPFREEPOINTER(mDeformMesh);
-                mDeformMesh = new GPP::DeformMesh;
 
+                mpUI->ShowControlBar(false);
+                mpUI->ShowVertexBar(false);
                 // Update
                 UpdateModelRendering();
                 UpdateControlRendering();
@@ -513,9 +549,10 @@ namespace MagicApp
 
                 // Clear Data
                 ClearMeshData();
-                GPPFREEPOINTER(mDeformPointList);
-                mDeformPointList = new GPP::DeformPointList;
+                ClearPointCloudData();
 
+                mpUI->ShowControlBar(false);
+                mpUI->ShowVertexBar(false);
                 // Update
                 UpdateModelRendering();
                 UpdateControlRendering();
@@ -524,6 +561,68 @@ namespace MagicApp
             }
         }
         return false;
+    }
+
+    void AnimationApp::SwitchDeformType(DeformType dt)
+    {
+        if (dt == DT_NONE)
+        {
+            mDeformType = DT_NONE;
+            ClearMeshData();
+            ClearPointCloudData();
+            UpdateControlRendering();
+        }
+        else if (dt == DT_VERTEX)
+        {
+            if (mDeformType == DT_CONTROL_POINT)
+            {
+                ClearMeshData();
+                ClearPointCloudData();
+                UpdateControlRendering();
+            }
+            mDeformType = DT_VERTEX;
+            if (ModelManager::Get()->GetPointCloud() != NULL)
+            {
+                MessageBox(NULL, "顶点变形只支持网格类型", "温馨提示", MB_OK);
+                mpUI->ShowVertexBar(false);
+                mDeformType = DT_NONE;
+            }
+            else if (ModelManager::Get()->GetMesh() == NULL)
+            {
+                MessageBox(NULL, "请导入网格", "温馨提示", MB_OK);
+                mpUI->ShowVertexBar(false);
+                mDeformType = DT_NONE;
+            }
+            else
+            {
+                mDeformMesh = new GPP::DeformMesh;
+                int vertexCount = ModelManager::Get()->GetMesh()->GetVertexCount();
+                InitControlPoint(vertexCount);
+            }
+        }
+        else if (dt == DT_CONTROL_POINT)
+        {
+            if (mDeformType == DT_VERTEX)
+            {
+                ClearMeshData();
+                UpdateControlRendering();
+            }
+            mDeformType = DT_CONTROL_POINT;
+            if (ModelManager::Get()->GetPointCloud() != NULL)
+            {
+                mDeformPointList = new GPP::DeformPointList;
+            }
+            else if (ModelManager::Get()->GetMesh() != NULL)
+            {
+                mDeformMesh = new GPP::DeformMesh;
+            }
+            else
+            {
+                MessageBox(NULL, "请导入网格", "温馨提示", MB_OK);
+                mpUI->ShowControlBar(false);
+                mDeformType = DT_NONE;
+            }
+        }
     }
 
     void AnimationApp::InitControlPoint(int controlPointCount)
@@ -579,7 +678,7 @@ namespace MagicApp
         UpdateControlRendering();
     }
 
-    void AnimationApp::InitDeformation()
+    void AnimationApp::InitControlDeformation()
     {
         if (mDeformMesh)
         {
@@ -594,6 +693,9 @@ namespace MagicApp
                     vertexFixFlags.at(mControlIds.at(cid)) = 1;
                 }
             }
+#if MAKEDUMPFILE
+            GPP::DumpOnce();
+#endif
             GPP::ErrorCode res = mDeformMesh->Init(triMesh, vertexFixFlags);
             if (res == GPP_API_IS_NOT_AVAILABLE)
             {
@@ -602,14 +704,21 @@ namespace MagicApp
             }
             if (res != GPP_NO_ERROR)
             {
-                MessageBox(NULL, "变形初始化失败", "温馨提示", MB_OK);
+                if (res == GPP_INVALID_INPUT)
+                {
+                    MessageBox(NULL, "网格有连通区域没有固定点", "温馨提示", MB_OK);
+                }
+                else
+                {
+                    MessageBox(NULL, "变形初始化失败", "温馨提示", MB_OK);
+                }
                 return;
             }
             mIsDeformationInitialised = true;
         }
     }
 
-    void AnimationApp::DoDeformation()
+    void AnimationApp::DoControlDeformation()
     {
         if (mTargetControlCoords.empty())
         {
@@ -645,7 +754,11 @@ namespace MagicApp
             {
                 targetVertexIds.push_back(mControlIds.at(*itr));
             }
-            res = mDeformMesh->Deform(targetVertexIds, mTargetControlCoords);
+#if MAKEDUMPFILE
+            GPP::DumpOnce();
+#endif
+            res = mDeformMesh->Deform(targetVertexIds, mTargetControlCoords, GPP::DEFORM_MESH_TYPE_ACCURATE);
+            ModelManager::Get()->GetMesh()->UpdateNormal();
         }
         if (res != GPP_NO_ERROR)
         {
@@ -678,18 +791,18 @@ namespace MagicApp
         }
     }
 
-    void AnimationApp::RealTimeDeform()
-    {
-        if (!mIsDeformationInitialised)
-        {
-            MessageBox(NULL, "变形没有初始化", "温馨提示", MB_OK);
-            return;
-        }
-        mRightMouseType = DEFORM;
-        mTargetControlCoords.clear();
-        mTargetControlIds.clear();
-        UpdateModelRendering();
-    }
+    //void AnimationApp::RealTimeDeform()
+    //{
+    //    if (!mIsDeformationInitialised)
+    //    {
+    //        MessageBox(NULL, "变形没有初始化", "温馨提示", MB_OK);
+    //        return;
+    //    }
+    //    mRightMouseType = DEFORM;
+    //    mTargetControlCoords.clear();
+    //    mTargetControlIds.clear();
+    //    UpdateModelRendering();
+    //}
 
     void AnimationApp::MoveControlPoint()
     {
@@ -755,12 +868,8 @@ namespace MagicApp
 
         if (triMesh)
         {
-            {
-                MessageBox(NULL, "网格变形正在升级中，可以使用点云变形", "温馨提示", MB_OK);
-                return;
-            }
             MagicCore::RenderSystem::Get()->RenderMesh("Model_AnimationApp", "CookTorrance", triMesh, 
-                MagicCore::RenderSystem::MODEL_NODE_CENTER);
+                MagicCore::RenderSystem::MODEL_NODE_CENTER, NULL, NULL, true);
         }
         else if (pointCloud)
         {
@@ -786,6 +895,7 @@ namespace MagicApp
             MagicCore::RenderSystem::Get()->HideRenderingObject("ControlPoint_Free_AnimationApp");
             MagicCore::RenderSystem::Get()->HideRenderingObject("ControlPoint_Fix_AnimationApp");
             MagicCore::RenderSystem::Get()->HideRenderingObject("ControlPoint_Handle_AnimationApp");
+            MagicCore::RenderSystem::Get()->HideRenderingObject("ControlPoint_Target_AnimationApp");
         }
         else
         {
@@ -813,10 +923,6 @@ namespace MagicApp
                         handleCoords.push_back(triMesh->GetVertexCoord(mControlIds.at(cid)));
                     }
                 }
-                //if (mPickControlId != -1)
-                //{
-                //    freeCoords.push_back(mPickTargetCoord);
-                //}
             }
             else if (pointCloud)
             {
@@ -835,14 +941,13 @@ namespace MagicApp
                         handleCoords.push_back(pointCloud->GetPointCoord(mControlIds.at(cid)));
                     }
                 }
-                //if (mPickControlId != -1)
-                //{
-                //    freeCoords.push_back(mPickTargetCoord);
-                //}
             }            
             MagicCore::RenderSystem::Get()->RenderPointList("ControlPoint_Free_AnimationApp", "SimplePoint_Large", GPP::Vector3(0, 0, 1), freeCoords, MagicCore::RenderSystem::MODEL_NODE_CENTER);
-            MagicCore::RenderSystem::Get()->RenderPointList("ControlPoint_Fix_AnimationApp", "SimplePoint_Large", GPP::Vector3(1, 0, 0), fixCoords, MagicCore::RenderSystem::MODEL_NODE_CENTER);
             MagicCore::RenderSystem::Get()->RenderPointList("ControlPoint_Handle_AnimationApp", "SimplePoint_Large", GPP::Vector3(0, 1, 0), handleCoords, MagicCore::RenderSystem::MODEL_NODE_CENTER);
+            if (mDeformType == AnimationApp::DT_CONTROL_POINT)
+            {
+                MagicCore::RenderSystem::Get()->RenderPointList("ControlPoint_Fix_AnimationApp", "SimplePoint_Large", GPP::Vector3(1, 0, 0), fixCoords, MagicCore::RenderSystem::MODEL_NODE_CENTER);
+            }
 
             if (mTargetControlCoords.size() > 0)
             {

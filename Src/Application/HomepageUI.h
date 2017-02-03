@@ -19,7 +19,6 @@ namespace MagicApp
         void ImportModel(MyGUI::Widget* pSender);
         void ImportPointCloud(MyGUI::Widget* pSender);
         void ImportMesh(MyGUI::Widget* pSender);
-        void ExportModel(MyGUI::Widget* pSender);
         void EnterPointShopApp(MyGUI::Widget* pSender);
         void EnterMeshShopApp(MyGUI::Widget* pSender);
         void EnterRegistrationApp(MyGUI::Widget* pSender);

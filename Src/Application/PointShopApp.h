@@ -81,7 +81,7 @@ namespace MagicApp
         void IgnoreBack(bool ignore);
         void MoveModel(void);
 
-        void FusePointCloudColor(int neighborCount, double sharpDiff, bool isSubThread = true);
+        void FusePointCloudColor(int neighborCount, double sharpDiff_H, double sharpDiff_S, double sharpDiff_V, bool isSubThread = true);
         void FuseTextureImage(bool isSubThread = true);
         void LoadImageColorInfo(void);
         void SaveImageColorInfo(void);
@@ -136,6 +136,6 @@ namespace MagicApp
         int mNeighborCount;
         int mColorNeighborCount;
         double mIsolateValue;
-        double mSharpDiff;
+        GPP::Vector3 mSharpDiff;
     };
 }

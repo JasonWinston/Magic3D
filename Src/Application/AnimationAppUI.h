@@ -12,21 +12,27 @@ namespace MagicApp
         void Setup();
         void Shutdown();
 
+        void ShowControlBar(bool isVisible);
+        void ShowVertexBar(bool isVisible);
+
     private:
         void ImportModel(MyGUI::Widget* pSender);
         
-        void InitControlPoint(MyGUI::Widget* pSender);
+        void InitControlDeformType(MyGUI::Widget* pSender);
         void DoInitControlPoint(MyGUI::Widget* pSender);
-
-        void SelectControlPoint(MyGUI::Widget* pSender);
-        void SelectByRectangle(MyGUI::Widget* pSender);
-        void ClearSelection(MyGUI::Widget* pSender);
+        void SelectControlByRectangle(MyGUI::Widget* pSender);
+        void ClearControlSelection(MyGUI::Widget* pSender);
         void MoveControlPoint(MyGUI::Widget* pSender);
+        void InitControlDeformation(MyGUI::Widget* pSender);
+        void DoControlDeformation(MyGUI::Widget* pSender);
 
-        void DeformModel(MyGUI::Widget* pSender);
-        void InitDeformation(MyGUI::Widget* pSender);
-        void DoDeformation(MyGUI::Widget* pSender);
-        void RealTimeDeform(MyGUI::Widget* pSender);
+        void InitVertexDeformType(MyGUI::Widget* pSender);
+        void SelectVertexByRectangle(MyGUI::Widget* pSender);
+        void ClearVertexSelection(MyGUI::Widget* pSender);
+        void MoveVertex(MyGUI::Widget* pSender);
+        void InitVertexDeformation(MyGUI::Widget* pSender);
+        void DoVertexDeformation(MyGUI::Widget* pSender);
+
         void BackToHomepage(MyGUI::Widget* pSender);
 
     private:

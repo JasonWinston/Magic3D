@@ -73,7 +73,7 @@ namespace MagicApp
         void LoadImageColorInfo(void);
         void PickMeshColorFromImages(void);
 
-        void FuseMeshColor(bool isSubThread = true);
+        void FuseMeshColor(double sharpDiff_H, double sharpDiff_S, double sharpDiff_V, bool isSubThread = true);
 
         void GenerateTextureImage(bool isByVertexColor);
         void TuneTextureImageByVertexColor(bool isSubThread = true);
@@ -115,5 +115,6 @@ namespace MagicApp
         TextureType mTextureType;
         std::string mTextureImageName;
         std::vector<GPP::Int> mTextureImageMasks;
+        GPP::Vector3 mSharpDiff;
     };
 }

@@ -99,30 +99,40 @@
         </Widget>
 
         <Widget type="Button" skin="But_Color_CN" position="15 470 60 60" align="Left Top" name="But_PointCloudColor"/>
-        <Widget type="Button" skin="But_ColorMerging_CN" position="75 480 43 43" align="Left Top" name="But_FusePointCloudColor">
-            <Property key="Visible" value="false"/>
-        </Widget>
-        <Widget type="EditBox" skin="EditBox" position="85 523 30 30" align="Left Top" name="Edit_FuseColorNeighborCount">
+        <Widget type="EditBox" skin="EditBox" position="75 485 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_H">
             <Property key="TextColour" value="0.3 0.3 0.3"/>
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="EditBox" skin="EditBox" position="85 450 30 30" align="Left Top" name="Edit_FuseColorSharpDiff">
+        <Widget type="EditBox" skin="EditBox" position="105 485 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_S">
             <Property key="TextColour" value="0.3 0.3 0.3"/>
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_TextureMerge_CN" position="118 480 43 43" align="Left Top" name="But_FuseTextureImage">
+        <Widget type="EditBox" skin="EditBox" position="135 485 30 30" align="Left Top" name="Edit_FuseColorSharpDiff_V">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_PointPixelMap_CN" position="161 480 43 43" align="Left Top" name="But_LoadImageColorIds">
+        <Widget type="EditBox" skin="EditBox" position="165 485 30 30" align="Left Top" name="Edit_FuseColorNeighborCount">
+            <Property key="TextColour" value="0.3 0.3 0.3"/>
             <Property key="Visible" value="false"/>
         </Widget>
-        <Widget type="Button" skin="But_Save" position="204 480 43 43" align="Left Top" name="But_ExportImageColorIds">
+        <Widget type="Button" skin="But_ColorMerging_CN" position="195 480 43 43" align="Left Top" name="But_FusePointCloudColor">
+            <Property key="Visible" value="false"/>
+        </Widget>
+        
+        <Widget type="Button" skin="But_TextureImage_CN" position="15 535 60 60" align="Left Top" name="But_TextureImage"/>
+        <Widget type="Button" skin="But_TextureMerge_CN" position="75 545 43 43" align="Left Top" name="But_FuseTextureImage">
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="Button" skin="But_PointPixelMap_CN" position="118 545 43 43" align="Left Top" name="But_LoadImageColorIds">
+            <Property key="Visible" value="false"/>
+        </Widget>
+        <Widget type="Button" skin="But_Save" position="161 545 43 43" align="Left Top" name="But_ExportImageColorIds">
             <Property key="Visible" value="false"/>
         </Widget>
 
-    	<Widget type="Button" skin="But_Home" position="15 535 60 60" align="Left Top" name="But_BackToHomepage"/>
+    	<Widget type="Button" skin="But_Home" position="15 600 60 60" align="Left Top" name="But_BackToHomepage"/>
 
-        <Widget type="ProgressBar" skin="ProgressBar" position="15 605 150 20" align="Left Top" name="APIProgress">
+        <Widget type="ProgressBar" skin="ProgressBar" position="15 670 150 20" align="Left Top" name="APIProgress">
             <Property key="AutoTrack" value="false"/>
             <Property key="FlowDirection" value="LeftToRight"/>
             <Property key="Visible" value="false"/>

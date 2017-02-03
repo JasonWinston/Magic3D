@@ -21,19 +21,21 @@ namespace MagicApp
         mRoot = MyGUI::LayoutManager::getInstance().loadLayout("AnimationApp.layout");
         mRoot.at(0)->findWidget("But_ImportModel")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::ImportModel);
         
-        mRoot.at(0)->findWidget("But_InitControlPoint")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitControlPoint);
+        mRoot.at(0)->findWidget("But_InitControlDeformType")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitControlDeformType);
         mRoot.at(0)->findWidget("But_DoInitControlPoint")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::DoInitControlPoint);
-
-        mRoot.at(0)->findWidget("But_SelectControlPoint")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::SelectControlPoint);
-        mRoot.at(0)->findWidget("But_SelectByRectangle")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::SelectByRectangle);
-        mRoot.at(0)->findWidget("But_EraseSelections")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::ClearSelection);
+        mRoot.at(0)->findWidget("But_SelectControlByRectangle")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::SelectControlByRectangle);
+        mRoot.at(0)->findWidget("But_EraseControlSelections")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::ClearControlSelection);
         mRoot.at(0)->findWidget("But_MoveControlPoint")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::MoveControlPoint);
-
-        mRoot.at(0)->findWidget("But_Deformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::DeformModel);
-        mRoot.at(0)->findWidget("But_InitDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitDeformation);
-        mRoot.at(0)->findWidget("But_DoDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::DoDeformation);
-        mRoot.at(0)->findWidget("But_RealTimeDeform")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::RealTimeDeform);
-
+        mRoot.at(0)->findWidget("But_InitControlDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitControlDeformation);
+        mRoot.at(0)->findWidget("But_DoControlDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::DoControlDeformation);
+        
+        mRoot.at(0)->findWidget("But_InitVertexDeformType")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitVertexDeformType);
+        mRoot.at(0)->findWidget("But_SelectVertexByRectangle")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::SelectVertexByRectangle);
+        mRoot.at(0)->findWidget("But_EraseVertexSelections")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::ClearVertexSelection);
+        mRoot.at(0)->findWidget("But_MoveVertex")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::MoveVertex);
+        mRoot.at(0)->findWidget("But_InitVertexDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::InitVertexDeformation);
+        mRoot.at(0)->findWidget("But_DoVertexDeformation")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::DoVertexDeformation);
+        
         mRoot.at(0)->findWidget("But_BackToHomepage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &AnimationAppUI::BackToHomepage);
     }
 
@@ -53,10 +55,8 @@ namespace MagicApp
         }
     }
 
-    void AnimationAppUI::InitControlPoint(MyGUI::Widget* pSender)
+    void AnimationAppUI::ShowControlBar(bool isVisible)
     {
-        bool isVisible = mRoot.at(0)->findWidget("But_DoInitControlPoint")->castType<MyGUI::Button>()->isVisible();
-        isVisible = !isVisible;
         mRoot.at(0)->findWidget("But_DoInitControlPoint")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("Edit_ControlPointCount")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
@@ -67,6 +67,34 @@ namespace MagicApp
             ss >> textString;
             mRoot.at(0)->findWidget("Edit_ControlPointCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             mRoot.at(0)->findWidget("Edit_ControlPointCount")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+        }
+        mRoot.at(0)->findWidget("But_SelectControlByRectangle")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_EraseControlSelections")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_MoveControlPoint")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_InitControlDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_DoControlDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
+    }
+
+    void AnimationAppUI::InitControlDeformType(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_DoInitControlPoint")->castType<MyGUI::Button>()->isVisible();
+        isVisible = !isVisible;
+        ShowControlBar(isVisible);
+        if (isVisible)
+        {
+            ShowVertexBar(false);
+        }
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            if (isVisible)
+            {
+                animationApp->SwitchDeformType(AnimationApp::DT_CONTROL_POINT);
+            }
+            else
+            {
+                animationApp->SwitchDeformType(AnimationApp::DT_NONE);
+            }
         }
     }
 
@@ -91,17 +119,8 @@ namespace MagicApp
             }      
         }
     }
-
-    void AnimationAppUI::SelectControlPoint(MyGUI::Widget* pSender)
-    {
-        bool isVisible = mRoot.at(0)->findWidget("But_SelectByRectangle")->castType<MyGUI::Button>()->isVisible();
-        isVisible = !isVisible;
-        mRoot.at(0)->findWidget("But_SelectByRectangle")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_EraseSelections")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_MoveControlPoint")->castType<MyGUI::Button>()->setVisible(isVisible);
-    }
     
-    void AnimationAppUI::SelectByRectangle(MyGUI::Widget* pSender)
+    void AnimationAppUI::SelectControlByRectangle(MyGUI::Widget* pSender)
     {
         AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
         if (animationApp != NULL)
@@ -110,7 +129,7 @@ namespace MagicApp
         }
     }
     
-    void AnimationAppUI::ClearSelection(MyGUI::Widget* pSender)
+    void AnimationAppUI::ClearControlSelection(MyGUI::Widget* pSender)
     {
         AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
         if (animationApp != NULL)
@@ -128,39 +147,98 @@ namespace MagicApp
         }
     }
 
-    void AnimationAppUI::DeformModel(MyGUI::Widget* pSender)
+    void AnimationAppUI::InitControlDeformation(MyGUI::Widget* pSender)
     {
-        bool isVisible = mRoot.at(0)->findWidget("But_InitDeformation")->castType<MyGUI::Button>()->isVisible();
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            animationApp->InitControlDeformation();
+        }
+    }
+
+    void AnimationAppUI::DoControlDeformation(MyGUI::Widget* pSender)
+    {
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            animationApp->DoControlDeformation();
+        }
+    }
+
+    void AnimationAppUI::ShowVertexBar(bool isVisible)
+    {
+        mRoot.at(0)->findWidget("But_SelectVertexByRectangle")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_EraseVertexSelections")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_MoveVertex")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_InitVertexDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_DoVertexDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
+    }
+
+    void AnimationAppUI::InitVertexDeformType(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_SelectVertexByRectangle")->castType<MyGUI::Button>()->isVisible();
         isVisible = !isVisible;
-        mRoot.at(0)->findWidget("But_InitDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_DoDeformation")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_RealTimeDeform")->castType<MyGUI::Button>()->setVisible(isVisible);
-    }
-
-    void AnimationAppUI::InitDeformation(MyGUI::Widget* pSender)
-    {
+        ShowVertexBar(isVisible);
+        if (isVisible)
+        {
+            ShowControlBar(false);
+        }
         AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
         if (animationApp != NULL)
         {
-            animationApp->InitDeformation();
+            if (isVisible)
+            {
+                animationApp->SwitchDeformType(AnimationApp::DT_VERTEX);
+            }
+            else
+            {
+                animationApp->SwitchDeformType(AnimationApp::DT_NONE);
+            }
         }
     }
 
-    void AnimationAppUI::DoDeformation(MyGUI::Widget* pSender)
+    void AnimationAppUI::SelectVertexByRectangle(MyGUI::Widget* pSender)
     {
         AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
         if (animationApp != NULL)
         {
-            animationApp->DoDeformation();
+            animationApp->SelectFreeControlPoint();
         }
     }
 
-    void AnimationAppUI::RealTimeDeform(MyGUI::Widget* pSender)
+    void AnimationAppUI::ClearVertexSelection(MyGUI::Widget* pSender)
     {
         AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
         if (animationApp != NULL)
         {
-            animationApp->RealTimeDeform();
+            animationApp->ClearFreeControlPoint();
+        }
+    }
+
+    void AnimationAppUI::MoveVertex(MyGUI::Widget* pSender)
+    {
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            animationApp->MoveControlPoint();
+        }
+    }
+
+    void AnimationAppUI::InitVertexDeformation(MyGUI::Widget* pSender)
+    {
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            animationApp->InitControlDeformation();
+        }
+    }
+
+    void AnimationAppUI::DoVertexDeformation(MyGUI::Widget* pSender)
+    {
+        AnimationApp* animationApp = dynamic_cast<AnimationApp* >(AppManager::Get()->GetApp("AnimationApp"));
+        if (animationApp != NULL)
+        {
+            animationApp->DoControlDeformation();
         }
     }
 

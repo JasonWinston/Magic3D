@@ -31,6 +31,7 @@ namespace MagicApp
         void LoadImageColorIds(MyGUI::Widget* pSender);
         void SaveImageColorIds(MyGUI::Widget* pSender);
 
+        void MeshColor(MyGUI::Widget* pSender);
         void FuseMeshColor(MyGUI::Widget* pSender);
 
         void GenerateTextureImage(MyGUI::Widget* pSender);

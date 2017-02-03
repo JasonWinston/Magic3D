@@ -57,6 +57,8 @@ namespace MagicApp
 
         mRoot.at(0)->findWidget("But_PointCloudColor")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::PointCloudColor);
         mRoot.at(0)->findWidget("But_FusePointCloudColor")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::FusePointCloudColor);
+        
+        mRoot.at(0)->findWidget("But_TextureImage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::TextureImage);
         mRoot.at(0)->findWidget("But_FuseTextureImage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::FuseTextureImage);
         mRoot.at(0)->findWidget("But_LoadImageColorIds")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::LoadImageColorIds);
         mRoot.at(0)->findWidget("But_ExportImageColorIds")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &PointShopAppUI::SaveImageColorIds);
@@ -587,11 +589,10 @@ namespace MagicApp
         bool isVisible = mRoot.at(0)->findWidget("But_FusePointCloudColor")->castType<MyGUI::Button>()->isVisible();
         isVisible = !isVisible;
         mRoot.at(0)->findWidget("But_FusePointCloudColor")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_FuseTextureImage")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_LoadImageColorIds")->castType<MyGUI::Button>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("But_ExportImageColorIds")->castType<MyGUI::Button>()->setVisible(isVisible);
         mRoot.at(0)->findWidget("Edit_FuseColorNeighborCount")->castType<MyGUI::EditBox>()->setVisible(isVisible);
-        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
         {
             std::stringstream ss;
@@ -603,10 +604,24 @@ namespace MagicApp
 
             ss.clear();
             textString.clear();
-            ss << 0.8;
+            ss << 0.2;
             ss >> textString;
-            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff")->castType<MyGUI::EditBox>()->setOnlyText(textString);
-            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+
+            ss.clear();
+            textString.clear();
+            ss << 1.0;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
+
+            ss.clear();
+            textString.clear();
+            ss << 0.5;
+            ss >> textString;
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+            mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
         }
     }
 
@@ -617,8 +632,16 @@ namespace MagicApp
         {
             std::string textString = mRoot.at(0)->findWidget("Edit_FuseColorNeighborCount")->castType<MyGUI::EditBox>()->getOnlyText();
             int neighborCount = std::atoi(textString.c_str());
-            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff")->castType<MyGUI::EditBox>()->getOnlyText();
-            double sharpDiff = std::atof(textString.c_str());
+
+            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_H = std::atof(textString.c_str());
+
+            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_S = std::atof(textString.c_str());
+
+            textString = mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->getOnlyText();
+            double sharpDiff_V = std::atof(textString.c_str());
+
             if (neighborCount < 4)
             {
                 std::stringstream ss;
@@ -627,19 +650,42 @@ namespace MagicApp
                 ss >> textString;
                 mRoot.at(0)->findWidget("Edit_FuseColorNeighborCount")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             }
-            if (sharpDiff < 0 || sharpDiff > 1.74)
+            if (sharpDiff_H < 0 || sharpDiff_H > 1.0 || sharpDiff_S < 0 || sharpDiff_S > 1.0 || sharpDiff_V < 0 || sharpDiff_V > 1.0)
             {
                 std::stringstream ss;
                 std::string textString;
-                ss << 0.8;
+                ss << 0.2;
                 ss >> textString;
-                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_H")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+                ss.clear();
+                textString.clear();
+                ss << 1.0;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_S")->castType<MyGUI::EditBox>()->setOnlyText(textString);
+
+                ss.clear();
+                textString.clear();
+                ss << 0.5;
+                ss >> textString;
+                mRoot.at(0)->findWidget("Edit_FuseColorSharpDiff_V")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             }
-            if (neighborCount >= 4 && sharpDiff > 0 && sharpDiff <= 1.74)
+            if (neighborCount >= 4 && sharpDiff_H >= 0 && sharpDiff_H <= 1.0 && sharpDiff_S >= 0 && sharpDiff_S <= 1.0 &&
+                sharpDiff_V >= 0 && sharpDiff_V <= 1.0)
             {
-                pointShop->FusePointCloudColor(neighborCount, sharpDiff, true);
+                pointShop->FusePointCloudColor(neighborCount, sharpDiff_H, sharpDiff_S, sharpDiff_V, true);
             }
         }
+    }
+
+    void PointShopAppUI::TextureImage(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_FuseTextureImage")->castType<MyGUI::Button>()->isVisible();
+        isVisible = !isVisible;
+        mRoot.at(0)->findWidget("But_FuseTextureImage")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_LoadImageColorIds")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_ExportImageColorIds")->castType<MyGUI::Button>()->setVisible(isVisible);
+        
     }
 
     void PointShopAppUI::FuseTextureImage(MyGUI::Widget* pSender)
