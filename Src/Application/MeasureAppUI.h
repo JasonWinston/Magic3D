@@ -24,8 +24,11 @@ namespace MagicApp
         void SetDistanceInfo(int refFaceCount, bool bCalculted, double minDist, double maxDist);
         void SetThicknessInfo(bool bShow, double medianThickness = 0.0);
 
+        void UpdateIsClosedInfo(void);
+
     private:
         void SwitchDisplayMode(MyGUI::Widget* pSender);
+        void SwitchSelectMode(MyGUI::Widget* pSender);
 
         void ImportModel(MyGUI::Widget* pSender);
         void ImportRefModel(MyGUI::Widget* pSender);
@@ -38,6 +41,10 @@ namespace MagicApp
         void ComputeCurvatureGeodesics(MyGUI::Widget* pSender);
         void SmoothGeodesicsOnVertex(MyGUI::Widget* pSender);
 
+        void SectionCurve(MyGUI::Widget* pSender);
+        void FacePointCurve(MyGUI::Widget* pSender);
+        void SplitMesh(MyGUI::Widget* pSender);
+
         void PointsToMeshDistance(MyGUI::Widget* pSender);
         void ComputePointsToMeshDistance(MyGUI::Widget* pSender);
 
@@ -49,9 +56,18 @@ namespace MagicApp
         void MeasurePrincipalCurvature(MyGUI::Widget* pSender);
         void MeasureThickness(MyGUI::Widget* pSender);
 
+        void DetectPrimitive(MyGUI::Widget* pSender);
+        void DetectOptionPlane(MyGUI::Widget* pSender);
+        void DetectOptionCone(MyGUI::Widget* pSender);
+        void DetectOptionSphere(MyGUI::Widget* pSender);
+        void DetectOptionCylinder(MyGUI::Widget* pSender);
+        void DoDetectPrimitive(MyGUI::Widget* pSender);
+        void SelectPrimitive(MyGUI::Widget* pSender);
+
         void BackToHomepage(MyGUI::Widget* pSender);
 
         void UpdateTextInfo(void);
+        void UpdateClosedInfo(MyGUI::Widget* pSender);
 
     private:
         MyGUI::VectorWidgetPtr mRoot;
@@ -69,5 +85,9 @@ namespace MagicApp
         double mMaxDistance;
         bool mIsShowThickness;
         double mMedianThickness;
+        bool mOptionPlane;
+        bool mOptionCone;
+        bool mOptionSphere;
+        bool mOptionCylinder;
     };
 }

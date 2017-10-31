@@ -20,7 +20,11 @@ namespace MagicApp
         mMinDistance(0.0),
         mMaxDistance(0.0),
         mIsShowThickness(false),
-        mMedianThickness(0.0)
+        mMedianThickness(0.0),
+        mOptionPlane(true),
+        mOptionCone(true),
+        mOptionSphere(true),
+        mOptionCylinder(true)
     {
     }
 
@@ -33,6 +37,7 @@ namespace MagicApp
         MagicCore::ResourceManager::LoadResource("../../Media/MeasureApp", "FileSystem", "MeasureApp");
         mRoot = MyGUI::LayoutManager::getInstance().loadLayout("MeasureApp.layout");
         mRoot.at(0)->findWidget("But_DisplayMode")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SwitchDisplayMode);
+        mRoot.at(0)->findWidget("But_SelectMode")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SwitchSelectMode);
         
         mRoot.at(0)->findWidget("But_ImportModelRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::ImportModel);
 
@@ -43,6 +48,10 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_ExactGeodesics")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::ComputeExactGeodesics);
         mRoot.at(0)->findWidget("But_CurvatureGeodesics")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::ComputeCurvatureGeodesics);
         mRoot.at(0)->findWidget("But_SmoothGeodesicsOnVertex")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SmoothGeodesicsOnVertex);
+
+        mRoot.at(0)->findWidget("But_SectionCurve")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SectionCurve);
+        mRoot.at(0)->findWidget("But_FacePointCurve")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::FacePointCurve);
+        mRoot.at(0)->findWidget("But_Cut")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SplitMesh);
 
         mRoot.at(0)->findWidget("But_MeasureRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureModel);
         mRoot.at(0)->findWidget("But_AreaRef")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::MeasureArea);
@@ -56,11 +65,26 @@ namespace MagicApp
         mRoot.at(0)->findWidget("But_ImportMeasureData")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::ImportRefModel);
         mRoot.at(0)->findWidget("But_ComputeDistance")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::ComputePointsToMeshDistance);
 
+        mRoot.at(0)->findWidget("But_DetectPrimitive")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DetectPrimitive);
+        mRoot.at(0)->findWidget("CB_Plane")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DetectOptionPlane);
+        mRoot.at(0)->findWidget("CB_Cone")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DetectOptionCone);
+        mRoot.at(0)->findWidget("CB_Sphere")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DetectOptionSphere);
+        mRoot.at(0)->findWidget("CB_Cylinder")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DetectOptionCylinder);
+        mRoot.at(0)->findWidget("But_DoDetectPrimitive")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::DoDetectPrimitive);
+        mRoot.at(0)->findWidget("But_SelectPrimitive")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::SelectPrimitive);
 
         mRoot.at(0)->findWidget("But_BackToHomepage")->castType<MyGUI::Button>()->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::BackToHomepage);
 
         mTextInfo = mRoot.at(0)->findWidget("Text_Info")->castType<MyGUI::TextBox>();
         mTextInfo->setTextColour(MyGUI::Colour(75.0 / 255.0, 131.0 / 255.0, 128.0 / 255.0));
+
+        MyGUI::Button* cbClosed = mRoot.at(0)->findWidget("CB_Closed")->castType<MyGUI::Button>();
+        cbClosed->eventMouseButtonClick += MyGUI::newDelegate(this, &MeasureAppUI::UpdateClosedInfo);
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            cbClosed->setStateCheck(measureShop->IsGeodesicClose());
+        }
     }
 
     void MeasureAppUI::Shutdown()
@@ -152,6 +176,15 @@ namespace MagicApp
         }
     }
 
+    void MeasureAppUI::SwitchSelectMode(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->SwitchSelectionMode();
+        }
+    }
+
     void MeasureAppUI::ImportModel(MyGUI::Widget* pSender)
     {
         MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
@@ -181,16 +214,9 @@ namespace MagicApp
         mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setVisible(isVisible);
         if (isVisible)
         {
-            std::string textString = "1";
+            std::string textString = "0.25";
             mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setOnlyText(textString);
             mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
-        }
-        mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setVisible(isVisible);
-        if (isVisible)
-        {
-            std::string textString = "0";
-            mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setOnlyText(textString);
-            mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->setTextSelectionColour(MyGUI::Colour::Black);
         }
     }
 
@@ -247,14 +273,11 @@ namespace MagicApp
             double weight = std::atof(textString.c_str());
             if (weight < 0)
             {
-                std::string newStr = "1";
+                std::string newStr = "0.25";
                 mRoot.at(0)->findWidget("Edit_CurvtureWeight")->castType<MyGUI::EditBox>()->setOnlyText(newStr);
                 return;
             }
-            textString = mRoot.at(0)->findWidget("Edit_CurvtureType")->castType<MyGUI::EditBox>()->getOnlyText();
-            int curvatureType = std::atoi(textString.c_str());
-            curvatureType = curvatureType > 0 ? 1 : (curvatureType < 0 ? -1 : 0);
-            measureShop->ComputeCurvatureGeodesics(curvatureType, weight, true);
+            measureShop->ComputeCurvatureGeodesics(weight, true);
         }
     }
 
@@ -264,6 +287,33 @@ namespace MagicApp
         if (measureShop != NULL)
         {
             measureShop->SmoothGeodesicsOnVertex();
+        }
+    }
+
+    void MeasureAppUI::SectionCurve(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->ComputeSectionCurve();
+        }
+    }
+
+    void MeasureAppUI::FacePointCurve(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->ComputeFacePointCurve();
+        }
+    }
+
+    void MeasureAppUI::SplitMesh(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->SplitMesh();
         }
     }
 
@@ -329,6 +379,93 @@ namespace MagicApp
         if (measureShop != NULL)
         {
             measureShop->MeasureThickness(true);
+        }
+    }
+
+    void MeasureAppUI::DetectPrimitive(MyGUI::Widget* pSender)
+    {
+        bool isVisible = mRoot.at(0)->findWidget("But_DoDetectPrimitive")->castType<MyGUI::Button>()->isVisible();
+        isVisible = !isVisible;
+        mRoot.at(0)->findWidget("CB_Plane")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("CB_Cone")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("CB_Sphere")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("CB_Cylinder")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_DoDetectPrimitive")->castType<MyGUI::Button>()->setVisible(isVisible);
+        mRoot.at(0)->findWidget("But_SelectPrimitive")->castType<MyGUI::Button>()->setVisible(isVisible);
+        if (isVisible)
+        {
+            mOptionPlane = true;
+            mOptionCone = true;
+            mOptionSphere = true;
+            mOptionCylinder = true;
+            mRoot.at(0)->findWidget("CB_Plane")->castType<MyGUI::Button>()->setStateCheck(true);
+            mRoot.at(0)->findWidget("CB_Cone")->castType<MyGUI::Button>()->setStateCheck(true);
+            mRoot.at(0)->findWidget("CB_Sphere")->castType<MyGUI::Button>()->setStateCheck(true);
+            mRoot.at(0)->findWidget("CB_Cylinder")->castType<MyGUI::Button>()->setStateCheck(true);
+        }
+    }
+
+    void MeasureAppUI::DetectOptionPlane(MyGUI::Widget* pSender)
+    {
+        mOptionPlane = !mOptionPlane;
+        mRoot.at(0)->findWidget("CB_Plane")->castType<MyGUI::Button>()->setStateCheck(mOptionPlane);
+        MeasureApp* pointShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (pointShop != NULL)
+        {
+            pointShop->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+        }
+    }
+
+    void MeasureAppUI::DetectOptionCone(MyGUI::Widget* pSender)
+    {
+        mOptionCone = !mOptionCone;
+        mRoot.at(0)->findWidget("CB_Cone")->castType<MyGUI::Button>()->setStateCheck(mOptionCone);
+        MeasureApp* measureApp = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureApp != NULL)
+        {
+            measureApp->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+        }
+    }
+
+    void MeasureAppUI::DetectOptionSphere(MyGUI::Widget* pSender)
+    {
+        mOptionSphere = !mOptionSphere;
+        mRoot.at(0)->findWidget("CB_Sphere")->castType<MyGUI::Button>()->setStateCheck(mOptionSphere);
+        MeasureApp* measureApp = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureApp != NULL)
+        {
+            measureApp->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+        }
+    }
+
+    void MeasureAppUI::DetectOptionCylinder(MyGUI::Widget* pSender)
+    {
+        mOptionCylinder = !mOptionCylinder;
+        mRoot.at(0)->findWidget("CB_Cylinder")->castType<MyGUI::Button>()->setStateCheck(mOptionCylinder);
+        MeasureApp* measureApp = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureApp != NULL)
+        {
+            measureApp->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+        }
+    }
+
+    void MeasureAppUI::DoDetectPrimitive(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureApp = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureApp != NULL)
+        {
+            measureApp->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+            measureApp->DetectPrimitive(true);
+        }
+    }
+
+    void MeasureAppUI::SelectPrimitive(MyGUI::Widget* pSender)
+    {
+        MeasureApp* measureApp = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureApp != NULL)
+        {
+            measureApp->SetDetectOptions(mOptionPlane, mOptionCone, mOptionSphere, mOptionCylinder);
+            measureApp->SetSelectPrimitiveMode();
         }
     }
 
@@ -477,5 +614,22 @@ namespace MagicApp
         }
 
         mTextInfo->setCaption(textString);
+    }
+
+    void MeasureAppUI::UpdateIsClosedInfo()
+    {
+        UpdateClosedInfo(NULL);
+    }
+
+    void MeasureAppUI::UpdateClosedInfo(MyGUI::Widget* pSender)
+    {
+        MyGUI::Button* closedCB = mRoot.at(0)->findWidget("CB_Closed")->castType<MyGUI::Button>();
+        MeasureApp* measureShop = dynamic_cast<MeasureApp* >(AppManager::Get()->GetApp("MeasureApp"));
+        if (measureShop != NULL)
+        {
+            measureShop->SwitchGeodesicClose();
+            bool isClosed = measureShop->IsGeodesicClose();
+            closedCB->setStateCheck(isClosed);
+        }
     }
 }
